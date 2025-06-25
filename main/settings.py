@@ -68,6 +68,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'helpers': 'main.helpers', # 'nombre_que_usarás': 'ruta.al.modulo'
+            }
         },
     },
 ]
