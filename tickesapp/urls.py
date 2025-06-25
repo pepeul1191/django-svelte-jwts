@@ -14,9 +14,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path
+import os
+from django.conf import settings
+from django.urls import path, re_path
+from django.contrib.staticfiles.views import serve
 from . import views # Importa tus vistas desde el mismo directorio
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home_view, name='home'), # La URL vacía es para el home de la app
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
