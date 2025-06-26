@@ -9,9 +9,9 @@
   <link rel="icon" href="{{ env.STATIC_URL }}favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="{{ env.STATIC_URL }}dist/vendor.min.css">
   {% if env.STATIC_ENV == 'development' %}
-  <link rel="stylesheet" href="{{ env.STATIC_URL }}dist/app.css">
+  <link rel="stylesheet" href="{{ env.STATIC_URL }}dist/access.css">
   {% elif current_env == 'production' %}
-  <link rel="stylesheet" href="{{ env.STATIC_URL }}dist/app.min.css">
+  <link rel="stylesheet" href="{{ env.STATIC_URL }}dist/access.min.css">
   {% endif %}
   <script>
     const URLS = {
@@ -23,9 +23,9 @@
 </head>
 <body>
   {% if env.STATIC_ENV == 'development' %}
-  <script src="{{ env.STATIC_URL }}dist/app.js"></script>
+  <script src="{{ env.STATIC_URL }}dist/access.js"></script>
   {% elif current_env == 'production' %}
-  <script src="{{ env.STATIC_URL }}dist/app.min.js"></script>
+  <script src="{{ env.STATIC_URL }}dist/access.min.js"></script>
   {% endif %}
   <input type="hidden" name="csrfmiddlewaretoken" value="...">
 </body>
