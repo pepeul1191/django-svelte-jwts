@@ -1,4 +1,7 @@
-<script></script>
+<script>
+	import DemoUpload from "../../forms/DemoUpload.svelte";
+
+</script>
 
 <style></style>
 
@@ -16,6 +19,7 @@
   <div class="container">
     <h2 class="text-center mb-4">Acerca de Nosotros</h2>
     <p class="text-center">Somos una empresa comprometida con la excelencia y dedicados a brindar soluciones personalizadas a nuestros clientes.</p>
+    <DemoUpload />
   </div>
 </section>
 <!-- Sección Servicios -->

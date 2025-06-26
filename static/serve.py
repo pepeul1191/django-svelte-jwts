@@ -11,6 +11,15 @@ class CORSRequestHandler(SimpleHTTPRequestHandler):
     self.send_header('Access-Control-Allow-Headers', 'Content-Type')
     super().end_headers()
 
+  def do_OPTIONS(self):
+    # Responder al preflight request
+    self.send_response(200)
+    self.send_header('Access-Control-Allow-Origin', 'http://localhost:8000')
+    self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+    self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    self.send_header('Access-Control-Allow-Credentials', 'true')
+    self.end_headers()
+
 def run_server(port=8001):
   """Inicia el servidor HTTP con CORS habilitado"""
   server_address = ('', port)

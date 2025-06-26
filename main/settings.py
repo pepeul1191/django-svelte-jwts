@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,6 +56,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'main.middlewares.ServerHeaderMiddleware'
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8090",  # Tu backend Sinatra
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Configuraciones adicionales para cookies CSRF
 CSRF_COOKIE_NAME = 'csrftoken'  # Nombre por defecto
