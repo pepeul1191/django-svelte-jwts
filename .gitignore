@@ -29,13 +29,13 @@
 !/tmp/storage/
 !/tmp/storage/.keep
 
-/public/assets
+/static/assets
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
 node_modules
-public/dist
+static/dist
 
 __pycache__
 *.sqlite3

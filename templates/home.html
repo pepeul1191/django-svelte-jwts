@@ -16,6 +16,7 @@
   <script>
     const URLS = {
       BASE: "{{ env.BASE_URL|escapejs }}",
+      FILE_SERVICE: "{{ env.URL_FILE_SERVICE|escapejs }}",
     };
   </script>
 </head>
@@ -32,5 +33,6 @@
   {% elif current_env == 'production' %}
   <script src="{{ env.STATIC_URL }}dist/app.min.js"></script>
   {% endif %}
+  <input type="hidden" name="csrfmiddlewaretoken" value="...">
 </body>
 </html>
