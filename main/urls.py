@@ -26,5 +26,7 @@ urlpatterns = [
     path('', views.home_view, name='home'), # La URL vacía es para el home de la app
 ]
 
+handler404 = views.custom_404_view
+
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
