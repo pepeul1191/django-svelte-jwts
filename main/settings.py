@@ -55,6 +55,14 @@ MIDDLEWARE = [
     'main.middlewares.ServerHeaderMiddleware'
 ]
 
+# Configuraciones adicionales para cookies CSRF
+CSRF_COOKIE_NAME = 'csrftoken'  # Nombre por defecto
+CSRF_COOKIE_AGE = 31449600  # 1 año en segundos (opcional)
+CSRF_COOKIE_SECURE = False  # True en producción con HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Permite acceso via JavaScript
+CSRF_COOKIE_SAMESITE = 'Lax'  # O 'Strict'/'None' según necesidades
+CSRF_USE_SESSIONS = False  # Usa cookies (no sesiones) para CSRF
+
 ROOT_URLCONF = 'main.urls'
 
 TEMPLATES = [

@@ -18,15 +18,17 @@ import os
 from django.conf import settings
 from django.urls import path, re_path
 from django.contrib.staticfiles.views import serve
-from . import views # Importa tus vistas desde el mismo directorio
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
+from . import apis
 
 urlpatterns = [
     path('', views.home, name='home'), 
     path('sign-in', views.access, name='access'), 
     path('sign-up', views.access, name='access'), 
     path('reset-password', views.access, name='access'), 
+    path('api/v1/user/sign-in', apis.user_sign_in, name='access'), 
 ]
 
 handler404 = views.custom_404

@@ -27,23 +27,24 @@
         password: password, 
       };
       validateUser(data).then((resp) => {
-          console.log(resp)
-          message = resp.data.message;
-          messageClass = 'text-success';
-          setTimeout(() => {
-            message = '';
-            messageClass = '';
-            window.location.href = resp.data.url;
-          }, 1500);
-        }).catch((resp) =>  {
-          //console.log(resp)
-          message = resp.data;
-          messageClass = 'text-danger';
-          setTimeout(() => {
-            message = '';
-            messageClass = '';
-          }, 4000);
-        })
+        console.log(resp)
+        message = resp.data.message;
+        localStorage.setItem('jwtFileToken', resp.data.file_token);
+        messageClass = 'text-success';
+        setTimeout(() => {
+          message = '';
+          messageClass = '';
+          window.location.href = '/';
+        }, 1500);
+      }).catch((resp) =>  {
+        console.log(resp)
+        message = resp.message;
+        messageClass = 'text-danger';
+        setTimeout(() => {
+          message = '';
+          messageClass = '';
+        }, 4000);
+      })
     }
   }
 </script>

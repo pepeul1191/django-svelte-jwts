@@ -24,12 +24,30 @@ export const getSession = () => {
   });
 }
 
+const getCookie = (name) => {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+};
+
 export const validateUser = (params) => {
+  const csrftoken = getCookie('csrftoken');
+
   return new Promise((resolve, reject) => {
-    axios.post('/user/validate', JSON.stringify(params), {
+    axios.post('/api/v1/user/sign-in', JSON.stringify(params), {
       headers: {
         'Client-Origin': 'webapp',
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
       }
     }).then(function (response) {
       resolve(response);
