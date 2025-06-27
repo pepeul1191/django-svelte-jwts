@@ -28,7 +28,7 @@ def login(username, password):
     )
     if access_response.status_code == 200:
       tmp = json.loads(access_response.text)
-      answer['body']['user_id'] = tmp['id']
+      answer['body']['id'] = tmp['id']
       answer['body']['username'] = tmp['id']
       answer['body']['access_token'] = tmp['token']
       answer['body']['email'] = tmp['email']

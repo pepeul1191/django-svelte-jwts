@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-q5z00(q1^obwc$lol9t#isrk_ll%&x$ii+!#x$fqd*16hk&5gh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.tudominio.com', 'otrodominio.com'] 
 
@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'main.middlewares.ServerHeaderMiddleware'
+    'main.filters.ServerHeaderMiddleware'
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -70,6 +70,11 @@ CSRF_COOKIE_SECURE = False  # True en producción con HTTPS
 CSRF_COOKIE_HTTPONLY = False  # Permite acceso via JavaScript
 CSRF_COOKIE_SAMESITE = 'Lax'  # O 'Strict'/'None' según necesidades
 CSRF_USE_SESSIONS = False  # Usa cookies (no sesiones) para CSRF
+
+# Sesiones de usuario
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'  # Guardar sesión en cookie firmada
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 3600 * 24 * 7  # 7 días
 
 ROOT_URLCONF = 'main.urls'
 

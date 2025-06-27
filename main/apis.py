@@ -38,7 +38,10 @@ def user_session(request):
       'login_at': login_time
     }, status=200)
   else:
-    return JsonResponse({'error': 'No hay sesión activa'}, status=401)
+    return JsonResponse({
+      'error': 'No hay sesión activa',
+      'message': 'request.session.get(''user'') = None'
+    }, status=401)
 
 @require_http_methods(['POST'])
 def user_sign_in2(request):

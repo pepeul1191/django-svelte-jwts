@@ -12,7 +12,17 @@
   let messageClass = '';
   
   onMount(() => {
-
+    const search = location.search;
+    // Parsear los query params
+    const urlParams = new URLSearchParams(search);
+    const errorParam = urlParams.get('error');
+    if (errorParam) {
+      message = decodeURIComponent(errorParam);
+      messageClass = 'text-danger';
+    } else {
+      message = '';
+      messageClass = '';
+    }
   });
 
   const access = (event) => {

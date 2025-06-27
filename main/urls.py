@@ -24,11 +24,15 @@ from . import apis
 
 urlpatterns = [
   path('', views.home), 
+  path('assets', views.home), 
+  path('employees', views.home), 
+  path('issues', views.home), 
   path('sign-in', views.access), 
   path('sign-up', views.access), 
-  path('reset-password', views.access), 
+  path('reset-password', views.access),
+  path('sign-out', views.signout),  
   path('api/v1/user/sign-in', apis.user_sign_in), 
-  path('api/v1/user/session', apis.user_session), 
+  path('api/v1/user/session', apis.user_session),
 ]
 
 handler404 = views.custom_404
