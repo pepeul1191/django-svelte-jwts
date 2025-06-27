@@ -16,7 +16,7 @@
     const formData = new FormData();
     formData.append('file', fileInput);
     formData.append('folder', textInput);
-    const token = localStorage.getItem('jwtFileToken'); // obtén el JWT
+    const token = localStorage.getItem('jwtFilesToken'); // obtén el JWT
     console.log(token)
 
     try {

@@ -14,7 +14,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import os
 from django.conf import settings
 from django.urls import path, re_path
 from django.contrib.staticfiles.views import serve
@@ -24,16 +23,17 @@ from . import views
 from . import apis
 
 urlpatterns = [
-    path('', views.home, name='home'), 
-    path('sign-in', views.access, name='access'), 
-    path('sign-up', views.access, name='access'), 
-    path('reset-password', views.access, name='access'), 
-    path('api/v1/user/sign-in', apis.user_sign_in, name='access'), 
+  path('', views.home), 
+  path('sign-in', views.access), 
+  path('sign-up', views.access), 
+  path('reset-password', views.access), 
+  path('api/v1/user/sign-in', apis.user_sign_in), 
+  path('api/v1/user/session', apis.user_session), 
 ]
 
 handler404 = views.custom_404
 
 if settings.DEBUG:
-    # Esto ya estaba y sirve estáticos directamente desde STATICFILES_DIRS/app_static
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else '')
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  # Esto ya estaba y sirve estáticos directamente desde STATICFILES_DIRS/app_static
+  urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else '')
+  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

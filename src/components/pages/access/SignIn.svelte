@@ -27,9 +27,10 @@
         password: password, 
       };
       validateUser(data).then((resp) => {
-        console.log(resp)
+        //console.log(resp)
         message = resp.data.message;
-        localStorage.setItem('jwtFileToken', resp.data.file_token);
+        localStorage.setItem('jwtFilesToken', resp.data.files_token);
+        localStorage.setItem('jwtAccessToken', resp.data.access_token);
         messageClass = 'text-success';
         setTimeout(() => {
           message = '';
