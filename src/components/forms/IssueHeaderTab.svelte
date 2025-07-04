@@ -5,13 +5,14 @@
   import { fetchAll as fetchAllTags } from '../../services/app/tags_service';
   import { fetchAll as fetchAllPriorities } from '../../services/app/priorities_service';
   import { fetchAll as fetchAllIssueStates } from '../../services/app/issue_states_service';
+  import { create as createIssue } from '../../services/app/issues_services';
+  import { localDateTimeToISOString } from '../../helpers/datetime';
+  import { getInfo } from '../../services/app/auth_services';
   import DataTable from '../widgets/DataTable.svelte';
 
   const dispatch = createEventDispatcher();
-  let name = '';
+  let resume = '';
   let description = '';
-  let initDate = '';
-  let endDate = '';
   let issueStateId = '';
   let moment = '';
   let priorityId = '';
@@ -19,8 +20,13 @@
   let issueStates = [];
   let selectedTags = [];
   let tags = [];
-  let reporteredBy = '';
   let issueDataTable;
+  let employee = {
+    _id: '',
+    names: '',
+    last_names: '',
+  }
+  let employeeFullName = '';
 
   onMount(() => {
     fetchAllPriorities(URLS.TICKETS_SERVICE, 'jwtTicketsToken')
@@ -49,6 +55,17 @@
       .catch(error => {
         console.error('Error:', error);
       });
+
+    getInfo(URLS.TICKETS_SERVICE, 'jwtTicketsToken')
+      .then(response => {
+        //console.log('Estados:', response.data);
+        employee = response.data.employee;
+        employeeFullName = `${employee.names} ${employee.last_names}`;
+        //user = response.data.user;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     // table action buttons
     issueDataTable.actionButtons = [
       {
@@ -69,10 +86,28 @@
     issueDataTable.list();
   });
 
-  const searchClick = (event) => {
+  const saveForm = (event) => {
     event.preventDefault();
-    console.log({name, description, initDate, endDate, issueStateId, priorityId});
-    dispatch('search', {name, description, initDate, endDate, issueStateId, priorityId});
+    const body = {
+      resume: resume,
+      description: description, 
+      issue_state_id: issueStateId, 
+      priority_id: priorityId, 
+      reporter_id: employee._id,
+      reportered: localDateTimeToISOString(moment)
+    }
+    console.log(employee)
+    console.log(body)
+    createIssue(URLS.TICKETS_SERVICE, 'jwtTicketsToken', body)
+      .then(response => {
+        //console.log('Estados:', response.data);
+        console.log(response.data);
+        //user = response.data.user;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    //dispatch('search', {name, description, initDate, endDate, issueStateId, priorityId});
   }
 
   const cleanClick = (event) => {
@@ -111,23 +146,18 @@
   <form class="mb-4">
     <div class="row">
       <div class="col-md-9">
-        <label for="name" class="form-label">Resumen</label>
-        <input type="text" class="form-control" id="name" placeholder="Nombre" bind:value={name}>
+        <label for="resume" class="form-label">Resumen</label>
+        <input type="text" class="form-control" id="resume" placeholder="Resumen de la incidencia" bind:value={resume}>
       </div>
       <div class="col-md-3">
         <label for="reportered" class="form-label">Reportado por</label>
-        <input type="text" disabled class="form-control" id="reportered" placeholder="Descripción" bind:value={reporteredBy}>
+        <input type="text" disabled class="form-control" id="reportered" placeholder="Nombre" bind:value={employeeFullName}>
       </div>
     </div>
     <div class="row mt-3">
       <div class="col-md-12">
-        <label for="description" class="form-label">Descripción</label>
-        <textarea
-          class="form-control"
-          id="description"
-          placeholder="Descripción"
-          rows="8">
-        </textarea>
+        <label for="descriptionTxt" class="form-label">Descripción</label>
+        <textarea class="form-control" id="descriptionTxt" bind:value={description} rows="8" placeholder="Descripción"></textarea>
       </div>
     </div>
     <div class="row mt-3">
@@ -160,7 +190,7 @@
         />
       </div>
       <div class="col-md-3 d-flex justify-content-end align-items-end">
-        <button type="submit" class="btn btn-success me-2" on:click={searchClick}>
+        <button type="submit" class="btn btn-success me-2" on:click={saveForm}>
           <i class="fa fa-floppy-o me-2"></i> Guardar Datos Generales
         </button>
       </div>
