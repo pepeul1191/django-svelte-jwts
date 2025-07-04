@@ -1,0 +1,232 @@
+<svelte:options accessors={true} />
+<script>
+  import { onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
+  import { fetchAll as fetchAllTags } from '../../services/app/tags_service';
+  import { fetchAll as fetchAllPriorities } from '../../services/app/priorities_service';
+  import { fetchAll as fetchAllIssueStates } from '../../services/app/issue_states_service';
+  import DataTable from '../widgets/DataTable.svelte';
+
+  const dispatch = createEventDispatcher();
+  let name = '';
+  let description = '';
+  let initDate = '';
+  let endDate = '';
+  let issueStateId = '';
+  let moment = '';
+  let priorityId = '';
+  let priorities = [];
+  let issueStates = [];
+  let selectedTags = [];
+  let tags = [];
+  let reporteredBy = '';
+  let issueDataTable;
+
+  onMount(() => {
+    fetchAllPriorities(URLS.TICKETS_SERVICE, 'jwtTicketsToken')
+      .then(response => {
+        //console.log('Prioridades:', response.data);
+        priorities = response.data;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+    fetchAllIssueStates(URLS.TICKETS_SERVICE, 'jwtTicketsToken')
+      .then(response => {
+        //console.log('Estados:', response.data);
+        issueStates = response.data;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+    fetchAllTags(URLS.TICKETS_SERVICE, 'jwtTicketsToken')
+      .then(response => {
+        //console.log('Estados:', response.data);
+        tags = response.data;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    // table action buttons
+    issueDataTable.actionButtons = [
+      {
+        class: 'btn-secondary',
+        icon: 'fa-pencil',
+        label: 'Editar',
+        action: editIssue
+      },
+      {
+        class: 'btn-danger',
+        icon: 'fa-trash',
+        label: 'Eliminar',
+        action: (record) => {
+          issueDataTable.askToDeleteRow(record, 'id');
+        }
+      },
+    ];
+    issueDataTable.list();
+  });
+
+  const searchClick = (event) => {
+    event.preventDefault();
+    console.log({name, description, initDate, endDate, issueStateId, priorityId});
+    dispatch('search', {name, description, initDate, endDate, issueStateId, priorityId});
+  }
+
+  const cleanClick = (event) => {
+    event.preventDefault();
+    if (name || description) {
+      // Si al menos uno de los campos tiene valor, limpiamos ambos y disparamos el evento
+      name = '';
+      description = '';
+      dispatch('clean');
+    }
+  }
+
+  const addIssue = () => {
+    navigate(`/issues/add`);
+  }
+
+  const handleTableAlert = (callback) => { 
+    alertMessage = callback.detail;
+    setTimeout(() => {
+      alertMessage = {
+        text: '',
+        status: '',
+      };
+    }, 4300);
+  }
+</script>
+
+<style>
+
+</style>
+
+<div class="row subtitle-row">
+  <h4 class="subtitle">Datos de la Incidencia</h4>
+</div>
+<div class="container">
+  <form class="mb-4">
+    <div class="row">
+      <div class="col-md-9">
+        <label for="name" class="form-label">Resumen</label>
+        <input type="text" class="form-control" id="name" placeholder="Nombre" bind:value={name}>
+      </div>
+      <div class="col-md-3">
+        <label for="reportered" class="form-label">Reportado por</label>
+        <input type="text" disabled class="form-control" id="reportered" placeholder="Descripción" bind:value={reporteredBy}>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <label for="description" class="form-label">Descripción</label>
+        <textarea
+          class="form-control"
+          id="description"
+          placeholder="Descripción"
+          rows="8">
+        </textarea>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-3">
+        <label for="status" class="form-label">Estado de Ticket</label>
+        <select id="issueStateId" class="form-select" bind:value={issueStateId}>
+          <option value="" disabled selected>Seleccione Estado</option>
+          {#each issueStates as state}
+            <option value="{state._id}">{state.name}</option>
+          {/each}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="status" class="form-label">Prioridad</label>
+        <select id="priorityId" class="form-select" bind:value={priorityId}>
+          <option value="" disabled selected>Seleccione prioridad</option>
+          {#each priorities as priority}
+            <option value="{priority._id}">{priority.name}</option>
+          {/each}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="status" class="form-label">Momento</label>
+        <input
+          type="datetime-local"
+          class="form-control"
+          min="2024-01-01T00:00"
+          max="2025-12-31T23:59"
+          bind:value={moment}
+        />
+      </div>
+      <div class="col-md-3 d-flex justify-content-end align-items-end">
+        <button type="submit" class="btn btn-success me-2" on:click={searchClick}>
+          <i class="fa fa-floppy-o me-2"></i> Guardar Datos Generales
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="row subtitle-row">
+  <h4 class="subtitle">Etiquetas</h4>
+</div>
+<div class="row">
+  {#each tags as tag}
+    <div class="col-md-2 mb-2">
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          bind:group={selectedTags}
+          value={tag.id}
+          id={"tag-" + tag.id}
+        />
+        <label class="form-check-label" for={"tag-" + tag.id}>
+          {tag.name}
+        </label>
+      </div>
+    </div>
+  {/each}
+  <div class="col-md-12 d-flex justify-content-end align-items-end">
+    <button type="submit" class="btn btn-success me-2">
+      <i class="fa fa-floppy-o me-2"></i> Guardar Etiquetas
+    </button>
+  </div>
+</div>
+<div class="row subtitle-row mt-3">
+  <h4 class="subtitle">Documentos</h4>
+</div>
+<div class="container">
+  <DataTable 
+    bind:this={issueDataTable}
+    fetchURL={URLS.TICKETS_SERVICE + 'api/v1/issues'}
+    tokenStorageId={'jwtTicketsToken'}
+    columnKeys={['id', 'name', 'description']}
+    columnTypes={['id', 'td', 'td']}
+    columnNames={['ID', 'Nombre', 'Descripción', 'Acciones']}
+    columnStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
+    columnClasses={['d-none', '', '', 'text-end']}
+    tdStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
+    messages = {{
+      success: 'Datos actualizados', 
+      errorNetwork: 'No se pudo listar los sistemas. No hay conexión con el servidor.',
+      notFound: 'No se pudo listar los sistemas. Recurso no encontrado.',
+      serverError:'No se pudo listar los sistemas. Error interno del servidor',
+      requestError: 'No se pudo listar los sistemas. No se recibió respuesta del servidor',
+      otherError: 'No se pudo listar los sistemas. Occurrió un error no esperado al traer los datos del servidor',
+    }}
+    addButton={{
+      display: true,
+      disabled: false,
+      action: addIssue
+    }}
+    pagination = {{
+      display: false,
+      step: 10,
+      totalPages: 0,
+      actualPage: 1
+    }}
+    actionButtons={[]} 
+    on:alert={handleTableAlert}
+  />
+</div>

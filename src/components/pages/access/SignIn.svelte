@@ -41,6 +41,7 @@
         message = resp.data.message;
         localStorage.setItem('jwtFilesToken', resp.data.files_token);
         localStorage.setItem('jwtAccessToken', resp.data.access_token);
+        localStorage.setItem('jwtTicketsToken', resp.data.tickets_token);
         messageClass = 'text-success';
         setTimeout(() => {
           message = '';

@@ -3,6 +3,7 @@
   import Home from '../pages/app/Home.svelte';
   import Asste from '../pages/app/Asset.svelte';
   import Issue from '../pages/app/Issue.svelte';
+  import IssueDetail from '../pages/app/IssueDetail.svelte';
   import Employee from '../pages/app/Employee.svelte';
 	import Asset from '../pages/app/Asset.svelte';
   export let basepath = '/';
@@ -50,6 +51,7 @@
   <Route path="/assets" component={Asset} />
   <Route path="/issues" component={Issue} />
   <Route path="/employees" component={Employee} />
+  <Route path="/issues/new" component={IssueDetail} />
 </Router>
 
 <!-- Pie de Página -->

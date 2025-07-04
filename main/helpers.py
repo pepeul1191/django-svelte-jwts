@@ -29,30 +29,55 @@ def login(username, password):
     if access_response.status_code == 200:
       tmp = json.loads(access_response.text)
       answer['body']['id'] = tmp['id']
-      answer['body']['username'] = tmp['id']
+      answer['body']['username'] = tmp['username']
       answer['body']['access_token'] = tmp['token']
       answer['body']['email'] = tmp['email']
       # petición a la API de files
-      file_response = requests.post(
-        ENV['URL_FILE_SERVICE'] + 'api/v1/auth/generate-token',
-        json={},
+      files_response = requests.post(
+        ENV['URL_FILES_SERVICE'] + 'api/v1/auth/generate-token',
+        json={
+          'user': {
+            'id': answer['body']['id'],
+            'username': answer['body']['username'],
+            'email':answer['body']['email'],
+          }
+        },
         headers={
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-Auth-Trigger': ENV['X_AUTH_FILE_SERVICE']
+          'X-Auth-Trigger': ENV['X_AUTH_FILES_SERVICE']
         }
       )
-      if file_response.status_code == 200:
-        tmp = json.loads(file_response.text)
-        answer['body']['files_token'] = tmp['token']
+      # petición a la API de tickets
+      tickets_response = requests.post(
+        ENV['URL_TICKETS_SERVICE'] + 'api/v1/auth/generate-token',
+        json={
+          'user': {
+            'id': answer['body']['id'],
+            'username': answer['body']['username'],
+            'email':answer['body']['email'],
+          }
+        },
+        headers={
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Auth-Trigger': ENV['X_AUTH_TICKETS_SERVICE']
+        }
+      )
+      # juntar respuestas de servicios
+      if files_response.status_code == 200 and tickets_response.status_code == 200:
+        tmp1 = json.loads(files_response.text)
+        tmp2 = json.loads(tickets_response.text)
+        answer['body']['files_token'] = tmp1['token']
+        answer['body']['tickets_token'] = tmp2['token']
       else:
-        tmp = json.loads(file_response.text)
+        tmp = tmp1['message'] + ', ' + tmp2['message']
         answer = {
           'body': {
-            'error': tmp['message'],
-            'message': 'Error al autenticarse de el servidor de archivos'
+            'error': tmp,
+            'message': 'Error al autenticarse con los servicios'
           },
-          'status': file_response.status_code
+          'status': files_response.status_code
         }
     else:
       tmp = json.loads(access_response.text)
