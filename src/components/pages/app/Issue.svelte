@@ -79,9 +79,6 @@
     <h1 class="mb-2 subtitle">Gestión de Incidencias</h1>
   </div>
   <hr>
-  <div class="row subtitle-row">
-    <h4 class="subtitle">Filtros de Búsqueda</h4>
-  </div>
   {#if alertMessage.text != ''}
     <div class="alert alert-{alertMessage.status}" role="alert">
       {alertMessage.text}
@@ -98,13 +95,13 @@
   <div class="container">
     <DataTable 
       bind:this={issueDataTable}
-      fetchURL={URLS.TICKETS_SERVICE + 'api/v1/issues'}
+      fetchURL={URLS.TICKETS_SERVICE + 'api/v1/issues/summary'}
       tokenStorageId={'jwtTicketsToken'}
-      columnKeys={['id', 'name', 'description']}
+      columnKeys={['_id', 'resume', 'reporter.name', 'reportered', 'priority.name', 'issue_state.name']}
       columnTypes={['id', 'td', 'td']}
-      columnNames={['ID', 'Nombre', 'Descripción', 'Acciones']}
+      columnNames={['ID', 'Resumen', 'Reportado por', 'Fecha', 'Prioridad', 'Estado', 'Acciones']}
       columnStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
-      columnClasses={['d-none', '', '', 'text-end']}
+      columnClasses={['d-none', '', '', '','','','text-end']}
       tdStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
       messages = {{
         success: 'Datos actualizados', 

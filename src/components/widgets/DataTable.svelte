@@ -405,6 +405,10 @@
       console.error('No hay URL para traer datos');
     }
   };
+
+  const getValue = (obj, path) => {
+    return path.split('.').reduce((acc, part) => acc?.[part], obj);
+  }
 </script>
 
 <style>
@@ -534,7 +538,7 @@
               on:change={(event) => radioClicked(event, record, key, record[key])}
             />
           {:else} <!-- if columnTypes[i] == 'td'} -->
-            {record[key]}
+            {getValue(record, key)}
           {/if}
         </td>
       {/each}
