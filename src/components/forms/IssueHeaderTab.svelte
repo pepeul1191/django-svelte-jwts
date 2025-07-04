@@ -9,6 +9,7 @@
   import { localDateTimeToISOString } from '../../helpers/datetime';
   import { getInfo } from '../../services/app/auth_services';
   import DataTable from '../widgets/DataTable.svelte';
+	import UploadFiles from '../widgets/UploadFiles.svelte';
 
   const dispatch = createEventDispatcher();
   export let issue = {}
@@ -22,13 +23,14 @@
   let issueStates = [];
   let selectedTags = [];
   let tags = [];
-  let documentsTable;
+  let uploadDocuments;
   let employee = {
     _id: '',
     names: '',
     last_names: '',
   }
   let employeeFullName = '';
+  let disabled = true;
 
   export const updateView = () => {
     issueId = issue._id;
@@ -39,6 +41,11 @@
     priorityId = issue.priority._id;
     moment = issue.reportered;
     selectedTags = issue.tags.map(tag => tag._id);
+    disabled = false;
+    // documentos
+    uploadDocuments.setExtraData({
+      folder: issue
+    });
   }
 
   onMount(() => {
@@ -82,6 +89,31 @@
     // table action buttons
     documentsTable.actionButtons = [
       {
+        class: 'btn-secondary',
+        icon: 'fa-search',
+        label: 'Buscar',
+        action: (record) => {
+          //documentsTable.askToDeleteRow(record, 'id');
+          document.getElementById('fileInput').click();
+        }
+      },
+      {
+        class: 'btn-secondary',
+        icon: 'fa-upload',
+        label: 'Subir',
+        action: (record) => {
+          documentsTable.askToDeleteRow(record, 'id');
+        }
+      },
+      {
+        class: 'btn-secondary',
+        icon: 'fa-picture-o',
+        label: 'Ver',
+        action: (record) => {
+          documentsTable.askToDeleteRow(record, 'id');
+        }
+      },
+      {
         class: 'btn-danger',
         icon: 'fa-trash',
         label: 'Eliminar',
@@ -91,6 +123,7 @@
       },
     ];
     documentsTable.list();
+    documentsTable.addButton.action = () => documentsTable.addRow();
   });
 
   const saveForm = (event) => {
@@ -108,7 +141,8 @@
         .then(response => {
           //console.log('Estados:', response.data);
           console.log(response.data);
-          issueId = response.data._id; 
+          issueId = response.data._id;
+          disabled = false;
           //user = response.data.user;
         })
         .catch(error => {
@@ -150,10 +184,6 @@
       description = '';
       dispatch('clean');
     }
-  }
-
-  const addIssue = () => {
-    navigate(`/issues/add`);
   }
 
   const handleTableAlert = (callback) => { 
@@ -241,6 +271,7 @@
           type="checkbox"
           bind:group={selectedTags}
           value={tag._id}
+          {disabled}
           id={"tag-" + tag._id}
         />
         <label class="form-check-label" for={"tag-" + tag._id}>
@@ -250,45 +281,18 @@
     </div>
   {/each}
   <div class="col-md-12 d-flex justify-content-end align-items-end">
-    <button type="submit" class="btn btn-success me-2" on:click={saveTags}>
+    <button type="submit" class="btn btn-success me-2" on:click={saveTags} {disabled}>
       <i class="fa fa-floppy-o me-2"></i> Guardar Etiquetas
     </button>
   </div>
 </div>
 <div class="row subtitle-row mt-3">
-  <h4 class="subtitle">Documentos</h4>
-</div>
-<div class="container">
-  <DataTable 
-    bind:this={documentsTable}
-    fetchURL={URLS.TICKETS_SERVICE + 'api/v1/issues'}
-    tokenStorageId={'jwtTicketsToken'}
-    columnKeys={['id', 'name', 'description']}
-    columnTypes={['id', 'td', 'td']}
-    columnNames={['ID', 'Nombre', 'Descripción', 'Acciones']}
-    columnStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
-    columnClasses={['d-none', '', '', 'text-end']}
-    tdStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
-    messages = {{
-      success: 'Datos actualizados', 
-      errorNetwork: 'No se pudo listar los sistemas. No hay conexión con el servidor.',
-      notFound: 'No se pudo listar los sistemas. Recurso no encontrado.',
-      serverError:'No se pudo listar los sistemas. Error interno del servidor',
-      requestError: 'No se pudo listar los sistemas. No se recibió respuesta del servidor',
-      otherError: 'No se pudo listar los sistemas. Occurrió un error no esperado al traer los datos del servidor',
-    }}
-    addButton={{
-      display: true,
-      disabled: false,
-      action: addIssue
-    }}
-    pagination = {{
-      display: false,
-      step: 10,
-      totalPages: 0,
-      actualPage: 1
-    }}
-    actionButtons={[]} 
-    on:alert={handleTableAlert}
-  />
+  <h4 class="subtitle mb-3">Documentos</h4>
+  <UploadFiles 
+    bind:this={uploadDocuments}
+    postURL={URLS.FILES_SERVICE + 'api/v1/files'}
+    tokenStorageId={'jwtFilesToken'}
+    extraData={{
+      folder: issueId,
+    }} />
 </div>
