@@ -52,6 +52,7 @@
   <Route path="/issues" component={Issue} />
   <Route path="/employees" component={Employee} />
   <Route path="/issues/new" component={IssueDetail} />
+  <Route path="/issues/edit/:_id" let:params><IssueDetail _id={params._id}/></Route>
 </Router>
 
 <!-- Pie de Página -->

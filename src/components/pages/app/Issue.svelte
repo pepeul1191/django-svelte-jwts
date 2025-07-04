@@ -43,7 +43,7 @@
   });
 
   const editIssue = (issue) => {
-    navigate(`/issues/${issue.id}`);
+    navigate(`/issues/edit/${issue._id}`);
   }
 
   const handleSearchFilter = (event) => {

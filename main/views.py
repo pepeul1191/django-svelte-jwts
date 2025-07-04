@@ -22,7 +22,7 @@ def custom_404(request, exception):
 @login_required
 @ensure_csrf_cookie
 @require_http_methods(["GET"])
-def home(request):
+def home(request, _id = 'E'):
   context = {}
   return render(request, 'home.html', context)
 

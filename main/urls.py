@@ -28,6 +28,7 @@ urlpatterns = [
   path('employees', views.home), 
   path('issues', views.home),
   path('issues/new', views.home), 
+  path('issues/edit/<str:_id>', views.home), 
   path('sign-in', views.access), 
   path('sign-up', views.access), 
   path('reset-password', views.access),

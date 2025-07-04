@@ -1,19 +1,36 @@
 <script>
   import { onMount } from 'svelte';
 	import IssueHeaderTab from '../../forms/IssueHeaderTab.svelte';
+  import { fetchOneById } from '../../../services/app/issues_services';
 
   export let title = 'Nueva Incidencia';
+  export let _id = '';
   let issueDetailModalInstance;
   let issueFormInstance;
   let issueDetailModal;
+  let headerTabInstance;
   let alertMessage = {
     text: '',
     status: '',
   };
+  let issue = {};
   
   let modalTitle;
 
   onMount(() => {
+    if (_id != ''){
+      title = 'Editar Incidencia'
+    }
+    fetchOneById(URLS.TICKETS_SERVICE, 'jwtTicketsToken', _id)
+      .then(response => {
+        //console.log('Estados:', response.data);
+        issue = response.data;
+        headerTabInstance.issue = issue;
+        headerTabInstance.updateView();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     // montar acciones de la tabla
       // ejemplos
       //issueDataTable.addButton.action = () => issueDataTable.addRow();
@@ -45,7 +62,6 @@
       <button class="nav-link" id="etiquetas-tab" data-bs-toggle="tab" data-bs-target="#assets" type="button" role="tab">
         Activos Asociados
       </button>
-    </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="documentos-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
         Acceso a Usuarios
@@ -64,7 +80,7 @@
   </ul>
   <div class="tab-content">
     <div class="tab-pane fade show active" id="header" role="tabpanel">
-      <IssueHeaderTab />
+      <IssueHeaderTab bind:this={headerTabInstance} />
     </div>
     <div class="tab-pane fade" id="assets" role="tabpanel">
       <div class="row subtitle-row mt-3">

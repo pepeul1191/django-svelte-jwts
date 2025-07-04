@@ -5,12 +5,13 @@
   import { fetchAll as fetchAllTags } from '../../services/app/tags_service';
   import { fetchAll as fetchAllPriorities } from '../../services/app/priorities_service';
   import { fetchAll as fetchAllIssueStates } from '../../services/app/issue_states_service';
-  import { create as createIssue, patchTags } from '../../services/app/issues_services';
+  import { create as createIssue, patchTags, editIssue } from '../../services/app/issues_services';
   import { localDateTimeToISOString } from '../../helpers/datetime';
   import { getInfo } from '../../services/app/auth_services';
   import DataTable from '../widgets/DataTable.svelte';
 
   const dispatch = createEventDispatcher();
+  export let issue = {}
   let issueId = '';
   let resume = '';
   let description = '';
@@ -21,13 +22,24 @@
   let issueStates = [];
   let selectedTags = [];
   let tags = [];
-  let issueDataTable;
+  let documentsTable;
   let employee = {
     _id: '',
     names: '',
     last_names: '',
   }
   let employeeFullName = '';
+
+  export const updateView = () => {
+    issueId = issue._id;
+    resume = issue.resume;
+    description = issue.description;
+    employeeFullName = issue.reporter.name; 
+    issueStateId = issue.issue_state._id;
+    priorityId = issue.priority._id;
+    moment = issue.reportered;
+    selectedTags = issue.tags.map(tag => tag._id);
+  }
 
   onMount(() => {
     fetchAllPriorities(URLS.TICKETS_SERVICE, 'jwtTicketsToken')
@@ -68,23 +80,17 @@
         console.error('Error:', error);
       });
     // table action buttons
-    issueDataTable.actionButtons = [
-      {
-        class: 'btn-secondary',
-        icon: 'fa-pencil',
-        label: 'Editar',
-        action: editIssue
-      },
+    documentsTable.actionButtons = [
       {
         class: 'btn-danger',
         icon: 'fa-trash',
         label: 'Eliminar',
         action: (record) => {
-          issueDataTable.askToDeleteRow(record, 'id');
+          documentsTable.askToDeleteRow(record, 'id');
         }
       },
     ];
-    issueDataTable.list();
+    documentsTable.list();
   });
 
   const saveForm = (event) => {
@@ -97,16 +103,29 @@
       reporter_id: employee._id,
       reportered: localDateTimeToISOString(moment)
     }
-    createIssue(URLS.TICKETS_SERVICE, 'jwtTicketsToken', body)
-      .then(response => {
-        //console.log('Estados:', response.data);
-        console.log(response.data);
-        issueId = response.data._id; 
-        //user = response.data.user;
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+    if (issueId == ''){
+      createIssue(URLS.TICKETS_SERVICE, 'jwtTicketsToken', body)
+        .then(response => {
+          //console.log('Estados:', response.data);
+          console.log(response.data);
+          issueId = response.data._id; 
+          //user = response.data.user;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }else{
+      editIssue(URLS.TICKETS_SERVICE, 'jwtTicketsToken', body, issueId)
+        .then(response => {
+          //console.log('Estados:', response.data);
+          console.log(response.data);
+          issueId = response.data._id; 
+          //user = response.data.user;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
     //dispatch('search', {name, description, initDate, endDate, issueStateId, priorityId});
   }
 
@@ -241,7 +260,7 @@
 </div>
 <div class="container">
   <DataTable 
-    bind:this={issueDataTable}
+    bind:this={documentsTable}
     fetchURL={URLS.TICKETS_SERVICE + 'api/v1/issues'}
     tokenStorageId={'jwtTicketsToken'}
     columnKeys={['id', 'name', 'description']}
