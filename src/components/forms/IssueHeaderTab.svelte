@@ -5,12 +5,13 @@
   import { fetchAll as fetchAllTags } from '../../services/app/tags_service';
   import { fetchAll as fetchAllPriorities } from '../../services/app/priorities_service';
   import { fetchAll as fetchAllIssueStates } from '../../services/app/issue_states_service';
-  import { create as createIssue } from '../../services/app/issues_services';
+  import { create as createIssue, patchTags } from '../../services/app/issues_services';
   import { localDateTimeToISOString } from '../../helpers/datetime';
   import { getInfo } from '../../services/app/auth_services';
   import DataTable from '../widgets/DataTable.svelte';
 
   const dispatch = createEventDispatcher();
+  let issueId = '';
   let resume = '';
   let description = '';
   let issueStateId = '';
@@ -96,9 +97,22 @@
       reporter_id: employee._id,
       reportered: localDateTimeToISOString(moment)
     }
-    console.log(employee)
-    console.log(body)
     createIssue(URLS.TICKETS_SERVICE, 'jwtTicketsToken', body)
+      .then(response => {
+        //console.log('Estados:', response.data);
+        console.log(response.data);
+        issueId = response.data._id; 
+        //user = response.data.user;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    //dispatch('search', {name, description, initDate, endDate, issueStateId, priorityId});
+  }
+
+  const saveTags = (event) => {
+    event.preventDefault();
+    patchTags(URLS.TICKETS_SERVICE, 'jwtTicketsToken', issueId, selectedTags)
       .then(response => {
         //console.log('Estados:', response.data);
         console.log(response.data);
@@ -107,7 +121,6 @@
       .catch(error => {
         console.error('Error:', error);
       });
-    //dispatch('search', {name, description, initDate, endDate, issueStateId, priorityId});
   }
 
   const cleanClick = (event) => {
@@ -208,17 +221,17 @@
           class="form-check-input"
           type="checkbox"
           bind:group={selectedTags}
-          value={tag.id}
-          id={"tag-" + tag.id}
+          value={tag._id}
+          id={"tag-" + tag._id}
         />
-        <label class="form-check-label" for={"tag-" + tag.id}>
+        <label class="form-check-label" for={"tag-" + tag._id}>
           {tag.name}
         </label>
       </div>
     </div>
   {/each}
   <div class="col-md-12 d-flex justify-content-end align-items-end">
-    <button type="submit" class="btn btn-success me-2">
+    <button type="submit" class="btn btn-success me-2" on:click={saveTags}>
       <i class="fa fa-floppy-o me-2"></i> Guardar Etiquetas
     </button>
   </div>
