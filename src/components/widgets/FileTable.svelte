@@ -1,6 +1,7 @@
 <svelte:options accessors={true} />
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, createEventDispatcher } from 'svelte';
+  import { Modal } from 'bootstrap';
   import axios from 'axios';
   //import { deleteOne } from '../../../services/app/files_service'; // Asegúrate de importar tu servicio
 
@@ -24,6 +25,25 @@
   export let saveURL = '';
   export let tokenStorageId = '';
   export let extraData = {};
+
+  // delete confirmation modal
+  let deleteConfirmationInstance;
+  let deleteConfirmationModal;
+  let messageConfirmationModal = {
+    text: '',
+    status: ''
+  };
+  let idForDeleting = null;
+  let btnDisabledDeleteConfirmation = false;
+  // dispatch
+  const dispatch = createEventDispatcher();
+
+  onMount(() => {
+    // list();
+    deleteConfirmationInstance = new Modal(deleteConfirmationModal);
+    //console.log(addButton)
+    //console.log(pagination)
+  });
 
   const fileChange = (event) => {
     const { name, value } = event.target;
@@ -91,34 +111,11 @@
     }
   };
 
-  const deleteFile = (_id) => {
-    return async () => {
-      try {
-        /*
-        await deleteOne(_id);
-        files = files.filter(item => item._id !== _id);
-        messageImageAlert.show = true;
-        messageImageAlert.message = `Se eliminó la imagen del artículo`;
-        messageImageAlert.class = 'success';
-        */
-        setTimeout(() => {
-          messageImageAlert.show = false;
-        }, 5000);
-      } catch (error) {
-        console.error('Error al eliminar:', error);
-        messageImageAlert.show = true;
-        messageImageAlert.message = `Error al eliminar: ${error.message}`;
-        messageImageAlert.class = 'danger';
-      }
-    };
-  };
-
   let messageImageAlert = {
     show: false,
     message: '',
     class: ''
   };
-
 
   const radioThClicked = (event, key) => {
     const isChecked = event.target.checked;
@@ -165,6 +162,22 @@
       alert("No se pudo cargar el archivo. Por favor, inténtalo de nuevo.");
     }
   }
+
+  export const askToDeleteRow = (record, key) => {
+    idForDeleting = record[key];
+    deleteConfirmationInstance.show();
+  }
+
+  const deleteCallack = () => {
+    dispatch('deleteCallback', { 
+      [rowId]: idForDeleting,
+    });
+    deleteConfirmationInstance.hide();
+  }
+
+  export const deleteFromData = (id) => {
+    files = files.filter(file => file[rowId] !== id);
+  }
 </script>
 
 <style>
@@ -173,6 +186,33 @@
     align-items: center;
   }
 </style>
+
+<div bind:this={deleteConfirmationModal} class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmación de Eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        {#if messageConfirmationModal.text != ''}
+          <div class="alert alert-{messageConfirmationModal.status}" role="alert">
+            {messageConfirmationModal.text}
+          </div>
+        {/if}
+        ¿Seguro que quiere borrar el documento?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" disabled={btnDisabledDeleteConfirmation}>
+          <i class="fa fa-times"></i>Cancelar</button>
+        <button type="button" class="btn btn-danger" disabled={btnDisabledDeleteConfirmation}
+        on:click={deleteCallack}>
+          <i class="fa fa-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="container">
   <div class="mb-12">
@@ -234,7 +274,7 @@
               <a class="btn btn-secondary" href="{baseURL}{file.url}" target="_blank" rel="noopener noreferrer" on:click|preventDefault={viewFile(baseURL + file.url)}>
                 <i class="fa fa-search"></i> Ver 
               </a>
-              <button class="btn btn-danger" on:click={deleteFile(file._id)}>
+              <button class="btn btn-danger" on:click={askToDeleteRow(file, rowId)}>
                 <i class="fa fa-trash"></i> Borrar 
               </button>
             </td>

@@ -5,7 +5,7 @@
   import { fetchAll as fetchAllTags } from '../../services/app/tags_service';
   import { fetchAll as fetchAllPriorities } from '../../services/app/priorities_service';
   import { fetchAll as fetchAllIssueStates } from '../../services/app/issue_states_service';
-  import { create as createIssue, patchTags, editIssue, addDocument } from '../../services/app/issues_services';
+  import { create as createIssue, patchTags, editIssue, addDocument, removeDocument } from '../../services/app/issues_services';
   import { localDateTimeToISOString } from '../../helpers/datetime';
   import { getInfo } from '../../services/app/auth_services';
 	import FileTable from '../widgets/FileTable.svelte';
@@ -178,6 +178,20 @@
       };
     }, 4300);
   }
+
+  const deleteDocumentCallback = (callback) => {
+    let documentId = callback.detail._id;
+    removeDocument(URLS.TICKETS_SERVICE, 'jwtTicketsToken', issueId, documentId)
+      .then(response => {
+          //console.log('Estados:', response.data);
+          console.log(response.data);
+          //user = response.data.user;
+          documents.deleteFromData(documentId);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+  }
 </script>
 
 <style>
@@ -292,6 +306,7 @@
     fetchURL={URLS.TICKETS_SERVICE + 'api/v1/files'}
     tokenStorageId={'jwtFilesToken'}
     afterUploadCallback={addDocumentToIssue}
+    on:deleteCallback={deleteDocumentCallback}
     rowId={'_id'}
     extraData={{
       folder: issueId,
