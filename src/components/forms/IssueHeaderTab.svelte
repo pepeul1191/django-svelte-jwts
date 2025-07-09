@@ -5,11 +5,10 @@
   import { fetchAll as fetchAllTags } from '../../services/app/tags_service';
   import { fetchAll as fetchAllPriorities } from '../../services/app/priorities_service';
   import { fetchAll as fetchAllIssueStates } from '../../services/app/issue_states_service';
-  import { create as createIssue, patchTags, editIssue } from '../../services/app/issues_services';
+  import { create as createIssue, patchTags, editIssue, addDocument } from '../../services/app/issues_services';
   import { localDateTimeToISOString } from '../../helpers/datetime';
   import { getInfo } from '../../services/app/auth_services';
-  import DataTable from '../widgets/DataTable.svelte';
-	import UploadFiles from '../widgets/UploadFiles.svelte';
+	import FileTable from '../widgets/FileTable.svelte';
 
   const dispatch = createEventDispatcher();
   export let issue = {}
@@ -23,7 +22,7 @@
   let issueStates = [];
   let selectedTags = [];
   let tags = [];
-  let uploadDocuments;
+  let documents;
   let employee = {
     _id: '',
     names: '',
@@ -43,9 +42,10 @@
     selectedTags = issue.tags.map(tag => tag._id);
     disabled = false;
     // documentos
-    uploadDocuments.setExtraData({
+    documents.setExtraData({
       folder: issue
     });
+    documents.setFiles(issue.documents);
   }
 
   onMount(() => {
@@ -86,44 +86,6 @@
       .catch(error => {
         console.error('Error:', error);
       });
-    // table action buttons
-    documentsTable.actionButtons = [
-      {
-        class: 'btn-secondary',
-        icon: 'fa-search',
-        label: 'Buscar',
-        action: (record) => {
-          //documentsTable.askToDeleteRow(record, 'id');
-          document.getElementById('fileInput').click();
-        }
-      },
-      {
-        class: 'btn-secondary',
-        icon: 'fa-upload',
-        label: 'Subir',
-        action: (record) => {
-          documentsTable.askToDeleteRow(record, 'id');
-        }
-      },
-      {
-        class: 'btn-secondary',
-        icon: 'fa-picture-o',
-        label: 'Ver',
-        action: (record) => {
-          documentsTable.askToDeleteRow(record, 'id');
-        }
-      },
-      {
-        class: 'btn-danger',
-        icon: 'fa-trash',
-        label: 'Eliminar',
-        action: (record) => {
-          documentsTable.askToDeleteRow(record, 'id');
-        }
-      },
-    ];
-    documentsTable.list();
-    documentsTable.addButton.action = () => documentsTable.addRow();
   });
 
   const saveForm = (event) => {
@@ -184,6 +146,27 @@
       description = '';
       dispatch('clean');
     }
+  }
+
+  const addDocumentToIssue = (file) => {
+    //console.log(file)
+    console.log(documents)
+    let data = {
+      name: file.original_filename,
+      description: documents.textInput,
+      size: file.size,
+      url: file.path,
+      mime: file.mime_type,
+    }
+    addDocument(URLS.TICKETS_SERVICE, 'jwtTicketsToken', issueId, data)
+      .then(response => {
+          //console.log('Estados:', response.data);
+          console.log(response.data);
+          //user = response.data.user;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
   }
 
   const handleTableAlert = (callback) => { 
@@ -288,10 +271,28 @@
 </div>
 <div class="row subtitle-row mt-3">
   <h4 class="subtitle mb-3">Documentos</h4>
-  <UploadFiles 
-    bind:this={uploadDocuments}
-    postURL={URLS.FILES_SERVICE + 'api/v1/files'}
+  <FileTable 
+    bind:this={documents}
+    columnKeys={['_id', 'name', 'description', 'created']}
+    columnTypes={['id', 'td', 'td', 'td']}
+    columnNames={['ID', 'Nombre', 'Descripción', 'Fecha', 'Acciones']}
+    columnStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;', 'text-align: right !important; padding-right: 70px;']}
+    columnClasses={['d-none', '', '', '','','text-end']}
+    tdStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
+    messages = {{
+      success: 'Datos actualizados', 
+      errorNetwork: 'No se pudo listar los sistemas. No hay conexión con el servidor.',
+      notFound: 'No se pudo listar los sistemas. Recurso no encontrado.',
+      serverError:'No se pudo listar los sistemas. Error interno del servidor',
+      requestError: 'No se pudo listar los sistemas. No se recibió respuesta del servidor',
+      otherError: 'No se pudo listar los sistemas. Ocurrió un error no esperado al traer los datos del servidor',
+    }}
+    baseURL={URLS.FILES_SERVICE + 'api/v1/files/'}
+    saveURL={URLS.FILES_SERVICE + 'api/v1/files'}
+    fetchURL={URLS.TICKETS_SERVICE + 'api/v1/files'}
     tokenStorageId={'jwtFilesToken'}
+    afterUploadCallback={addDocumentToIssue}
+    rowId={'_id'}
     extraData={{
       folder: issueId,
     }} />
