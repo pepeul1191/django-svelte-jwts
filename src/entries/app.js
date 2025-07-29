@@ -1,4 +1,5 @@
 import '../stylesheets/styles.css';
+import 'easymde/dist/easymde.min.css';
 import App from '../components/layouts/App.svelte';
 
 const app = new App({

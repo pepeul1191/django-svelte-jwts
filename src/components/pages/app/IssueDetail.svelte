@@ -20,17 +20,22 @@
   onMount(() => {
     if (_id != ''){
       title = 'Editar Incidencia'
+      fetchOneById(URLS.TICKETS_SERVICE, 'jwtTicketsToken', _id)
+        .then(response => {
+          //console.log('Estados:', response.data);
+          issue = response.data;
+          headerTabInstance.issue = issue;
+          headerTabInstance.updateView();
+          headerTabInstance.loadMarkDownEditor();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }else{
+      headerTabInstance.loadMarkDownEditor();
     }
-    fetchOneById(URLS.TICKETS_SERVICE, 'jwtTicketsToken', _id)
-      .then(response => {
-        //console.log('Estados:', response.data);
-        issue = response.data;
-        headerTabInstance.issue = issue;
-        headerTabInstance.updateView();
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+    
+    
     // montar acciones de la tabla
       // ejemplos
       //issueDataTable.addButton.action = () => issueDataTable.addRow();

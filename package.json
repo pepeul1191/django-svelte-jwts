@@ -26,7 +26,9 @@
   "dependencies": {
     "axios": "^1.6.0",
     "bootstrap": "^5.3.3",
+    "easymde": "^2.20.0",
     "font-awesome": "^4.7.0",
+    "simplemde": "^1.11.2",
     "sirv-cli": "^2.0.0",
     "svelte": "^4.2.18",
     "svelte-app": "file:",

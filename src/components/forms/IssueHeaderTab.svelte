@@ -1,6 +1,7 @@
 <svelte:options accessors={true} />
 <script>
   import { onMount } from 'svelte';
+  import EasyMDE from 'easymde';
   import { createEventDispatcher } from 'svelte';
   import { fetchAll as fetchAllTags } from '../../services/app/tags_service';
   import { fetchAll as fetchAllPriorities } from '../../services/app/priorities_service';
@@ -30,6 +31,8 @@
   }
   let employeeFullName = '';
   let disabled = true;
+  let editorElement;
+  let easymde;
 
   export const updateView = () => {
     issueId = issue._id;
@@ -46,6 +49,21 @@
       folder: issue
     });
     documents.setFiles(issue.documents);
+  }
+
+  export const loadMarkDownEditor = () => {
+    easymde = new EasyMDE({
+      element: editorElement,
+      initialValue: description,
+      spellChecker: false,
+      autosave: {
+        enabled: false,
+      }
+    });
+
+    easymde.codemirror.on('change', () => {
+      description = easymde.value();
+    });
   }
 
   onMount(() => {
@@ -158,15 +176,22 @@
       url: file.path,
       mime: file.mime_type,
     }
+
     addDocument(URLS.TICKETS_SERVICE, 'jwtTicketsToken', issueId, data)
       .then(response => {
-          //console.log('Estados:', response.data);
-          console.log(response.data);
-          //user = response.data.user;
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+        //console.log('Estados:', response.data);
+        //user = response.data.user;
+        let document = {};
+        document.created = response.data.created;
+        document.description = response.data.description;
+        document.name = response.data.name;
+        document._id = response.data._id;
+        document.url = response.data.url;
+        documents.addSavedDocument(document);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 
   const handleTableAlert = (callback) => { 
@@ -216,7 +241,7 @@
     <div class="row mt-3">
       <div class="col-md-12">
         <label for="descriptionTxt" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descriptionTxt" bind:value={description} rows="8" placeholder="Descripción"></textarea>
+        <textarea class="form-control" id="descriptionTxt" bind:value={description} bind:this={editorElement} rows="8" placeholder="Descripción"></textarea>
       </div>
     </div>
     <div class="row mt-3">

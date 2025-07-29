@@ -5,7 +5,7 @@
   import axios from 'axios';
   //import { deleteOne } from '../../../services/app/files_service'; // Asegúrate de importar tu servicio
 
-  let files = [];
+  export let files = [];
   let fileInput = null;
   let responseMessage = '';
   let isLoading = false;
@@ -58,6 +58,13 @@
   export const setExtraData = (data) => {
     extraData = data;
   };
+
+  export const addSavedDocument = (doc) => {
+    console.log(files);
+    files.push(doc);
+    console.log(files)
+    files = files;
+  }
 
   export const setFiles = (docs) => {
     files = docs;

@@ -14,7 +14,7 @@ def login(username, password):
   try:  
     # petición a la API de autenticación
     access_response = requests.post(
-      ENV['URL_ACCESS_SERVICE'] + 'api/v1/sign-in',
+      ENV['URL_ACCESS_SERVICE'] + 'api/v1/auth/by-username',
       json={
         'username': username,
         'password': password,
