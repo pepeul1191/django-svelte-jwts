@@ -3,13 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "bin": {
+    "www": "./bin/www.js"
+  },
   "scripts": {
     "build": "rollup -c --environment production",
+    "nodemon": "nodemon --watch app.js --watch app --watch ./bin/www",
+    "dev2": "npm run nodemon & npm run dev-svelte",
     "dev": "concurrently --names \"Django,HTTPServer,Svelte\" -c \"bgBlue.bold,bgGreen.bold,bgYellow.bold\" \"npm run dev-backend\" \"npm run dev-frontend\" \"npm run dev-svelte\"",
     "dev-all": "concurrently --names \"Tickets,Go,Files,Front\" -c \"bgMagenta.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"bash -c 'cd /home/pepe/Documentos/ruby/tickets && npm run dev 2>/dev/null'\" \"bash -c 'cd /home/pepe/Documentos/go/accesos && go run main.go 2>/dev/null'\" \"bash -c 'cd /home/pepe/Documentos/ruby/files && npm run dev 2>/dev/null'\" \"npm run dev\"",
     "dev-backend": "python3 manage.py runserver",
     "dev-frontend": "cd static && python3 serve.py",
-    "dev-svelte": "rollup -c -w"
+    "dev-svelte": "rollup -c -w",
+    "start": "node ./bin/www"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
@@ -21,7 +27,8 @@
     "rollup-plugin-css-only": "^4.3.0",
     "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-svelte": "^7.1.2",
-    "svelte-preprocess": "^6.0.3"
+    "svelte-preprocess": "^6.0.3",
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
     "axios": "^1.6.0",
@@ -32,6 +39,15 @@
     "sirv-cli": "^2.0.0",
     "svelte": "^4.2.18",
     "svelte-app": "file:",
-    "svelte-routing": "^2.13.0"
+    "svelte-routing": "^2.13.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^17.2.1",
+    "ejs": "~2.6.1",
+    "express": "~4.16.1",
+    "express-session": "^1.18.2",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1"
   }
 }

@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
-	import IssueHeaderTab from '../../forms/IssueHeaderTab.svelte';
+  import IssueHeaderTab from '../../forms/IssueHeaderTab.svelte';
+  import IssueAssetTab from '../../forms/IssueAssetTab.svelte';
   import { fetchOneById } from '../../../services/app/issues_services';
 
   export let title = 'Nueva Incidencia';
@@ -9,6 +10,7 @@
   let issueFormInstance;
   let issueDetailModal;
   let headerTabInstance;
+  let assetTabInstance;
   let alertMessage = {
     text: '',
     status: '',
@@ -17,12 +19,45 @@
   
   let modalTitle;
 
+  // Función para manejar el cambio de pestaña
+  const handleTabChange = (event) => {
+    const tabId = event.target.getAttribute('data-bs-target');
+    console.log('Pestaña cambiada a:', tabId);
+    
+    // Aquí puedes ejecutar lógica específica para cada pestaña
+    switch(tabId) {
+      case '#header':
+        console.log('Pestaña Datos Generales activa');
+        break;
+      case '#assets':
+        console.log('Pestaña Activos Asociados activa');
+        // Ejemplo: cargar datos de activos
+        loadAssetsTab();
+        break;
+      case '#users':
+        console.log('Pestaña Usuarios activa');
+        break;
+      case '#histories':
+        console.log('Pestaña Historial activa');
+        break;
+      case '#logs':
+        console.log('Pestaña Actividad activa');
+        break;
+    }
+  }
+
+  // Ejemplo de función para cargar datos cuando se cambia a una pestaña específica
+  const loadAssetsTab = () => {
+    if (assetTabInstance && typeof assetTabInstance.loadData === 'function') {
+      assetTabInstance.loadData();
+    }
+  }
+
   onMount(() => {
     if (_id != ''){
       title = 'Editar Incidencia'
       fetchOneById(URLS.TICKETS_SERVICE, 'jwtTicketsToken', _id)
         .then(response => {
-          //console.log('Estados:', response.data);
           issue = response.data;
           headerTabInstance.issue = issue;
           headerTabInstance.updateView();
@@ -31,19 +66,23 @@
         .catch(error => {
           console.error('Error:', error);
         });
-    }else{
+    } else {
       headerTabInstance.loadMarkDownEditor();
     }
-    
-    
-    // montar acciones de la tabla
-      // ejemplos
-      //issueDataTable.addButton.action = () => issueDataTable.addRow();
-      //issueDataTable.addButton.action = () => issueDataTable.goToLink('/users');
-      //issueDataTable.addButton.action = () => issueDataTable.goToHref(BASE_URL + 'hola');
-      //issueDataTable.addButton.action = () => issueDataTable.openTab(BASE_URL + 'hola');    
-  });
 
+    // Agregar event listeners para los tabs
+    const tabElements = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabElements.forEach(tab => {
+      tab.addEventListener('shown.bs.tab', handleTabChange);
+    });
+
+    // Limpiar event listeners cuando el componente se destruye
+    return () => {
+      tabElements.forEach(tab => {
+        tab.removeEventListener('shown.bs.tab', handleTabChange);
+      });
+    };
+  });
 </script>
 <style></style>
 
@@ -88,9 +127,7 @@
       <IssueHeaderTab bind:this={headerTabInstance} />
     </div>
     <div class="tab-pane fade" id="assets" role="tabpanel">
-      <div class="row subtitle-row mt-3">
-        <h4 class="subtitle">Documentos</h4>
-      </div>
+      <IssueAssetTab bind:this={assetTabInstance} /> 
     </div>
     <div class="tab-pane fade" id="users" role="tabpanel">
       <div class="row subtitle-row mt-3">

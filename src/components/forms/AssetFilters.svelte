@@ -6,6 +6,7 @@
   const dispatch = createEventDispatcher();
   let name = '';
   let description = '';
+  export let showTitle = true;
 
 
   onMount(() => {
@@ -33,9 +34,11 @@
 </style>
 
 <form class="mb-4">
-  <div class="row subtitle-row mt-3">
-    <h4 class="subtitle">Filtros de Búsqueda</h4>
-  </div>
+  {#if showTitle }
+    <div class="row subtitle-row mt-3">
+      <h4 class="subtitle">Filtros de Búsqueda</h4>
+    </div>
+  {/if}
   <div class="row align-items-end">
     <div class="col-md-3">
       <label for="name" class="form-label">Buscar por Nombre</label>
