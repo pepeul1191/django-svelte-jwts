@@ -1,6 +1,8 @@
 <script>
   import { Router, Route, navigate } from 'svelte-routing';
   import { onMount } from 'svelte';
+  import Sidebar from '../widgets/Sidebar.svelte';
+  import Navbar from '../widgets/Navbar.svelte';
   import Home from '../pages/app/Home.svelte';
   import Asste from '../pages/app/Asset.svelte';
   import Issue from '../pages/app/Issue.svelte';
@@ -10,7 +12,12 @@
 	import Asset from '../pages/app/Asset.svelte';
   export let basepath = '/';
 
-  const fetchTokensIfMissing = () => {
+  let userType = '';
+  let activeLink = '';
+  let username = '';
+  let userImage = '';
+
+  const fetchInfoIfMissing = () => {
     // Verificar si los tokens ya existen
     var jwtToken = localStorage.getItem('jwtToken');
 
@@ -30,13 +37,17 @@
         if (xhr.status >= 200 && xhr.status < 300) {
           var response = JSON.parse(xhr.responseText);
           var tokens = response.tokens;
-          console.log(tokens)
+          var employee = response.employee;
 
           // Guardar ambos tokens en localStorage
           if (tokens) {
             localStorage.setItem('jwtTicketsToken', tokens.tickets);
             localStorage.setItem('jwtFilesToken', tokens.files);
             localStorage.setItem('jwtAccessToken', tokens.access);
+            localStorage.setItem('full_name', employee.last_names + ', ' + employee.names);
+            localStorage.setItem('image_url', URLS.FILES_SERVICE + employee.image_url);
+            username = employee.last_names + ', ' + employee.names;
+            userImage = URLS.FILES_SERVICE + employee.image_url;
           }
 
           console.log('Token guardado en localStorage.');
@@ -59,58 +70,61 @@
   }
 
   onMount(() => {
-    fetchTokensIfMissing()
-      .then(function() {
-        console.log('Tokens listos para usar.');
-      })
-      .catch(function(err) {
-        console.error('No se pudieron obtener los tokens:', err);
-      });
+    // Verificar si los tokens ya existen
+    const jwtTicketToken = localStorage.getItem('jwtTicketsToken');
+    const jwtFileToken = localStorage.getItem('jwtFilesToken');
+    const jwtAccessToken = localStorage.getItem('jwtAccessToken');
+    const fullName = localStorage.getItem('full_name');
+    const imageUrl = localStorage.getItem('image_url');
+
+    // Si los tokens ya están presentes, no hacemos nada
+    if (!jwtTicketToken || !jwtFileToken || !jwtAccessToken || !fullName || !imageUrl) {
+      fetchInfoIfMissing()
+        .then(function() {
+          console.log('Tokens listos para usar.');
+        })
+        .catch(function(err) {
+          console.error('No se pudieron obtener los tokens:', err);
+        });
+    }
+
+    if(!userImage || !username){
+      username = localStorage.getItem('full_name');
+      userImage = localStorage.getItem('image_url');
+    }
   });
 </script>
   
-<style></style>
+<style>
 
-<!-- Barra de Navegación -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" href="/" on:click|preventDefault={() => {navigate('/')}}>Tickets  </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/employees" on:click|preventDefault={() => {navigate('/employees')}}>Colaboradores</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/assets" on:click|preventDefault={() => {navigate('/assets')}}>Activos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/tags" on:click|preventDefault={() => {navigate('/tags')}}>Etiquetas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/issues" on:click|preventDefault={() => {navigate('/issues')}}>Incidencias</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/sign-out">Salir</a>
-        </li>
-      </ul>
-    </div>
+</style>
+
+<div class="d-flex">
+  <Sidebar {userType} {activeLink} />
+  <div class="main-content">
+    <Navbar {username} {userImage} />
+    <!-- Aquí se va a cargar el contenido principal según las rutas -->
+    <!-- Contenido principal -->
+    <main class="main-content mt-5">
+      <div class="container-fluid">
+        <Router basepath="{basepath}">
+          <Route path="/" component={Home} />
+          <Route path="/assets" component={Asset} />
+          <Route path="/issues" component={Issue} />
+          <Route path="/tags" component={Tag} />
+          <Route path="/employees" component={Employee} />
+          <Route path="/issues/new" component={IssueDetail} />
+          <Route path="/issues/edit/:_id" let:params><IssueDetail _id={params._id}/></Route>
+        </Router>
+      </div>
+    </main>
   </div>
-</nav>
+</div>
 
-<Router basepath="{basepath}">
-  <Route path="/" component={Home} />
-  <Route path="/assets" component={Asset} />
-  <Route path="/issues" component={Issue} />
-  <Route path="/tags" component={Tag} />
-  <Route path="/employees" component={Employee} />
-  <Route path="/issues/new" component={IssueDetail} />
-  <Route path="/issues/edit/:_id" let:params><IssueDetail _id={params._id}/></Route>
-</Router>
 
-<!-- Pie de Página -->
-<footer class="bg-dark text-white text-center py-3">
-  <p>&copy; 2024 Mi Sitio. Todos los derechos reservados.</p>
+<!-- Footer -->
+<footer class="bg-light text-center py-3 mt-auto">
+  <div class="container">
+    <p class="mb-0">© 2025 Innova ULima. Todos los derechos reservados.</p>
+  </div>
 </footer>

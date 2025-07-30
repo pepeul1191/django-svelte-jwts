@@ -76,6 +76,7 @@ export const login = async (username, password) => {
       if (filesResponse.status === 200 && ticketsResponse.status === 200) {
         answer.tokens.files = filesResponse.data.token;
         answer.tokens.tickets = ticketsResponse.data.token;
+        answer.employee = ticketsResponse.data.employee;
       } else {
         const tmpMessage = `${filesResponse.data.message}, ${ticketsResponse.data.message}`;
         answer.body.error = tmpMessage;

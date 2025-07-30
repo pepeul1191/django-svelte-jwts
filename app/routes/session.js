@@ -41,8 +41,10 @@ router.post('/sign-in', async (req, res) => {
 
     if (answer.status === 200) {
       // Si el login es exitoso, almacenar los datos del usuario en la sesión
+      console.log(answer)
       req.session.user = answer.body;
       req.session.tokens = answer.tokens;
+      req.session.employee = answer.employee;
       req.session.login_at = moment().toISOString();
 
       // Redirigir a la página principal
@@ -76,6 +78,7 @@ router.get('/session', requireLogin, (req, res) => {
     res.json({
       authenticated: true,
       user: req.session.user,
+      employee: req.session.employee,
       tokens: req.session.tokens,
       sessionId: req.sessionID,
       createdAt: req.session.cookie.expires
