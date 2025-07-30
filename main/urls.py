@@ -27,6 +27,7 @@ urlpatterns = [
   path('assets', views.home), 
   path('employees', views.home), 
   path('issues', views.home),
+  path('tags', views.home),
   path('issues/new', views.home), 
   path('issues/edit/<str:_id>', views.home), 
   path('sign-in', views.access), 
