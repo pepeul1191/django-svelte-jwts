@@ -35,7 +35,7 @@
         icon: 'fa-trash',
         label: 'Eliminar',
         action: (record) => {
-          issueDataTable.askToDeleteRow(record, 'id');
+          issueDataTable.askToDeleteRow(record, '_id');
         }
       },
     ];
@@ -96,6 +96,7 @@
     <DataTable 
       bind:this={issueDataTable}
       fetchURL={URLS.TICKETS_SERVICE + 'api/v1/issues/summary'}
+      deleteURL={URLS.TICKETS_SERVICE + 'api/v1/issues'}
       tokenStorageId={'jwtTicketsToken'}
       columnKeys={['_id', 'resume', 'reporter.name', 'reportered', 'priority.name', 'issue_state.name']}
       columnTypes={['id', 'td', 'td']}
@@ -122,8 +123,10 @@
         totalPages: 0,
         actualPage: 1
       }}
+      recordId={'_id'}
       actionButtons={[]} 
       on:alert={handleTableAlert}
+      token={localStorage.getItem('jwtTicketsToken')}
     />
   </div>
 </div>

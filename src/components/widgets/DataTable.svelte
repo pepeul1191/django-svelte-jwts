@@ -86,6 +86,8 @@
   }
 
   export const deleteRowFromDB = () => {
+    console.log(deleteURL)
+    console.log(idForDeleting)
     btnDisabledDeleteConfirmation = true;
     if(deleteURL && idForDeleting){
       axios.delete( // url, data, headers

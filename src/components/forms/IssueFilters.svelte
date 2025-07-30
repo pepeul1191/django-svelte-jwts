@@ -105,7 +105,7 @@
     </div>
   </div>
   <div class="row subtitle-row mt-3">
-    <h4 class="subtitle">Etiquetas de Incidencias</h4>
+    <p>Etiquetas de Incidencias</p>
   </div>
   <div class="row">
     {#each tags as tag}
