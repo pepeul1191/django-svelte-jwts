@@ -1,6 +1,12 @@
 <script>
+  import { onMount } from 'svelte';
 	import DemoUpload from "../../forms/DemoUpload.svelte";
+  import { activeLink } from '../../../helpers/store'; 
 
+  onMount(() => {
+    activeLink.set('/'); // La ruta activa será '/'
+    document.title = "Dashboard";
+  });
 </script>
 
 <style></style>

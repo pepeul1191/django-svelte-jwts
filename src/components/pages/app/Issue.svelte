@@ -3,6 +3,7 @@
   import { navigate } from "svelte-routing";
   import IssueFilters from '../../forms/IssueFilters.svelte';
   import DataTable from '../../widgets/DataTable.svelte';
+  import { activeLink } from '../../../helpers/store'; 
 
   let issueDetailModalInstance;
   let issueFormInstance;
@@ -15,6 +16,8 @@
   let modalTitle;
 
   onMount(() => {
+    activeLink.set('/issues');
+    document.title = "Gestión de Incidencias";
     // montar acciones de la tabla
       // ejemplos
       //issueDataTable.addButton.action = () => issueDataTable.addRow();
@@ -43,7 +46,7 @@
   });
 
   const editIssue = (issue) => {
-    navigate(`/issues/edit/${issue._id}`);
+    navigate(`/issues/${issue._id}/edit`);
   }
 
   const handleSearchFilter = (event) => {
@@ -76,7 +79,7 @@
 
 <div class="container my-2">
   <div class="row">
-    <h1 class="mb-2 subtitle">Gestión de Incidencias</h1>
+    <h1 class="mb-2 subtitle"><i class="fa fa-bug me-2"></i>Gestión de Incidencias</h1>
   </div>
   <hr>
   {#if alertMessage.text != ''}

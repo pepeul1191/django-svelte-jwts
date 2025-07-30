@@ -13,7 +13,6 @@
   export let basepath = '/';
 
   let userType = '';
-  let activeLink = '';
   let username = '';
   let userImage = '';
 
@@ -100,7 +99,7 @@
 </style>
 
 <div class="d-flex">
-  <Sidebar {userType} {activeLink} />
+  <Sidebar {userType} />
   <div class="main-content">
     <Navbar {username} {userImage} />
     <!-- Aquí se va a cargar el contenido principal según las rutas -->
@@ -114,7 +113,7 @@
           <Route path="/tags" component={Tag} />
           <Route path="/employees" component={Employee} />
           <Route path="/issues/new" component={IssueDetail} />
-          <Route path="/issues/edit/:_id" let:params><IssueDetail _id={params._id}/></Route>
+          <Route path="/issues/:_id/edit/" let:params><IssueDetail _id={params._id}/></Route>
         </Router>
       </div>
     </main>

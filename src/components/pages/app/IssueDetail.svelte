@@ -1,8 +1,10 @@
 <script>
   import { onMount } from 'svelte';
+  import { navigate } from 'svelte-routing';
   import IssueHeaderTab from '../../forms/IssueHeaderTab.svelte';
   import IssueAssetTab from '../../forms/IssueAssetTab.svelte';
   import { fetchOneById } from '../../../services/app/issues_services';
+  import { activeLink } from '../../../helpers/store'; 
 
   export let title = 'Nueva Incidencia';
   export let _id = '';
@@ -54,7 +56,11 @@
   }
 
   onMount(() => {
+    activeLink.set('/issues');
+    document.title = "Nueva Incidencia";
+
     if (_id != ''){
+      document.title = "Editar Incidencia";
       title = 'Editar Incidencia'
       fetchOneById(URLS.TICKETS_SERVICE, 'jwtTicketsToken', _id)
         .then(response => {
@@ -88,7 +94,11 @@
 
 <div class="container my-2">
   <div class="row">
-    <h1 class="mb-2 subtitle">{title}</h1>
+    <h1 class="mb-2 subtitle">
+      <a class="return-link" class:active={$activeLink === '/issues'} href="/issues" on:click|preventDefault={() => {navigate('/issues')}}>
+        <i class="fa fa-bug me-2"></i>Gestión de Incidencias
+      </a> / {title}
+    </h1>
   </div>
   <hr>
   {#if alertMessage.text != ''}

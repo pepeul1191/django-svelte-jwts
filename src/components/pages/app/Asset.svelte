@@ -4,6 +4,7 @@
   import AssetsFilters from '../../forms/AssetFilters.svelte';
   import DataTable from '../../widgets/DataTable.svelte';
   import AssetDetail from '../../forms/AssetDetail.svelte';
+  import { activeLink } from '../../../helpers/store'; 
 
   let assetDetailModalInstance;
   let assetFormInstance;
@@ -16,6 +17,8 @@
   let modalTitle;
 
   onMount(() => {
+    activeLink.set('/assets');
+    document.title = "Gestión de Activos";
     // montar acciones de la tabla
       // ejemplos
       //assetDataTable.addButton.action = () => assetDataTable.addRow();
@@ -103,7 +106,7 @@
 
 <div class="container my-2">
   <div class="row">
-    <h1 class="mb-2 subtitle">Gestión de Activos</h1>
+    <h1 class="mb-2 subtitle"><i class="fa fa-cogs me-2"></i>Gestión de Activos</h1>
   </div>
   <hr>
   {#if alertMessage.text != ''}

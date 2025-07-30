@@ -4,6 +4,7 @@
   import TagsFilters from '../../forms/TagFilters.svelte';
   import DataTable from '../../widgets/DataTable.svelte';
   import TagDetail from '../../forms/TagDetail.svelte';
+  import { activeLink } from '../../../helpers/store'; 
 
   let tagDetailModalInstance;
   let tagFormInstance;
@@ -16,6 +17,8 @@
   let modalTitle;
 
   onMount(() => {
+    activeLink.set('/tags');
+    document.title = "Gestión de Etiquetas";
     // montar acciones de la tabla
       // ejemplos
       //tagDataTable.addButton.action = () => tagDataTable.addRow();
@@ -103,7 +106,7 @@
 
 <div class="container my-2">
   <div class="row">
-    <h1 class="mb-2 subtitle">Gestión de Etiquetas</h1>
+    <h1 class="mb-2 subtitle"><i class="fa fa-tags me-2"></i>Gestión de Etiquetas</h1>
   </div>
   <hr>
   {#if alertMessage.text != ''}
