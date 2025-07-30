@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { Router } from 'express';
-import axios from 'axios';
 import { redirectIfLoggedIn, requireLogin } from '../configs/middlewares.js';
+import { login } from '../configs/helpers.js';
 
 const router = Router();
 dotenv.config();
@@ -28,54 +28,34 @@ router.get('/reset-password', redirectIfLoggedIn, (req, res) => {
 });
 
 router.post('/sign-in', async (req, res) => {
-  try {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    // Validar credenciales contra variables de entorno
-    if (username !== process.env.ADMIN_USERNAME || 
-        password !== process.env.ADMIN_PASSWORD) {
-      req.flash('error', 'Nombre de usuario o contraseña incorrectos');
+  // Verificamos si los campos están vacíos
+  if (!username || !password) {
+    req.flash('error', 'Debe de ingresar su usuario y contraseña');
+    return res.redirect('/sign-in');  // Redirigir a la vista de login con el error
+  }
+
+  try {
+    const answer = await login(username, password);
+
+    if (answer.status === 200) {
+      // Si el login es exitoso, almacenar los datos del usuario en la sesión
+      req.session.user = answer.body;
+      req.session.login_at = moment().toISOString();
+
+      // Redirigir a la página principal
+      return res.redirect('/');
+    } else {
+      // Si el login falla, almacenar el error en la sesión y redirigir al login
+      req.flash('error', answer.body.error || 'Error desconocido al iniciar sesión');
       return res.redirect('/sign-in');
     }
-
-    // Hacer petición a la API para generar el JWT
-    const apiResponse = await axios.post(
-      process.env.API_URL + 'api/v1/auth/admin',
-      {}, // body vacío ya que no se necesita payload
-      {
-        headers: {
-          'X-Auth-Admin-Trigger': process.env.AUTH_ADMIN_HEADER,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    // Guardar datos en sesión (debe ser después de obtener el token)
-    req.session.user = {
-      username: username,
-      token: apiResponse.data, // response token
-      loginTime: new Date(),
-      role: 'admin'
-    };
-
-    // Redirigir al dashboard o página principal
-    res.redirect('/'); // o donde quieras redirigir después del login
-
   } catch (error) {
-    console.error('Error en el proceso de login:', error);
-    
-    let errorMessage = 'Ocurrió un error durante el proceso de autenticación';
-    
-    if (error.response) {
-      // Error de la API externa
-      errorMessage = error.response.data.message || 'Error al generar el token';
-    } else if (error.request) {
-      // Error de conexión
-      errorMessage = 'No se pudo conectar con el servicio de autenticación';
-    }
-    
-    req.flash('error', errorMessage);
-    res.redirect('/sign-in');
+    console.error(error);
+    // Si ocurre un error del servidor, redirigir al login con el mensaje de error
+    req.flash('error', 'Error interno del servidor: ' + error.message);
+    return res.redirect('/sign-in');
   }
 });
 

@@ -10,7 +10,7 @@
     "build": "rollup -c --environment production",
     "nodemon": "nodemon --watch app.js --watch app --watch ./bin/www",
     "dev2": "npm run nodemon & npm run dev-svelte",
-    "dev": "concurrently --names \"Django,HTTPServer,Svelte\" -c \"bgBlue.bold,bgGreen.bold,bgYellow.bold\" \"npm run dev-backend\" \"npm run dev-frontend\" \"npm run dev-svelte\"",
+    "dev": "concurrently --names \"Express,Svelte\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run nodemon\" \"npm run dev-svelte\"",
     "dev-all": "concurrently --names \"Tickets,Go,Files,Front\" -c \"bgMagenta.bold,bgCyan.bold,bgGreen.bold,bgWhite.bold\" \"bash -c 'cd /home/pepe/Documentos/ruby/tickets && npm run dev 2>/dev/null'\" \"bash -c 'cd /home/pepe/Documentos/go/accesos && go run main.go 2>/dev/null'\" \"bash -c 'cd /home/pepe/Documentos/ruby/files && npm run dev 2>/dev/null'\" \"npm run dev\"",
     "dev-backend": "python3 manage.py runserver",
     "dev-frontend": "cd static && python3 serve.py",

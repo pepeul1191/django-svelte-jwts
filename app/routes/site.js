@@ -15,10 +15,7 @@ const sharedRoutes = [
 sharedRoutes.forEach((path) => {
   router.get(path, requireLogin, (req, res) => {
     res.locals.title = 'Inicio';
-    res.render('index', {
-      API_URL: process.env.API_URL || 'http://localhost:8080/',
-      BASE_URL: process.env.BASE_URL || 'http://localhost:8080/',
-    });
+    res.render('site/index');
   });
 });
 
