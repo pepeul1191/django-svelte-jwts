@@ -104,59 +104,57 @@
   </div>
 </div>
 
-<div class="container my-2">
-  <div class="row">
-    <h1 class="mb-2 subtitle"><i class="fa fa-cogs me-2"></i>Gestión de Activos</h1>
+<div class="row">
+  <h1 class="mb-2 subtitle"><i class="fa fa-cogs me-2"></i>Gestión de Activos</h1>
+</div>
+<hr>
+{#if alertMessage.text != ''}
+  <div class="alert alert-{alertMessage.status}" role="alert">
+    {alertMessage.text}
   </div>
-  <hr>
-  {#if alertMessage.text != ''}
-    <div class="alert alert-{alertMessage.status}" role="alert">
-      {alertMessage.text}
-    </div>
-  {/if}
-  <div class="container">
-    <AssetsFilters 
-      on:search={handleSearchFilter} 
-      on:clean={handleCleanFilter} />
-  </div>
-  <div class="row subtitle-row">
-    <h4 class="subtitle">Listado de Activos</h4>
-  </div>
-  <div class="container">
-    <DataTable 
-      bind:this={assetDataTable}
-      recordId={'_id'}
-      fetchURL={URLS.TICKETS_SERVICE + 'api/v1/assets'}
-      deleteURL={URLS.TICKETS_SERVICE + 'api/v1/assets'}
-      tokenStorageId={'jwtTicketsToken'}
-      columnKeys={['_id', 'name', 'description']}
-      columnTypes={['id', 'td', 'td']}
-      columnNames={['ID', 'Nombre', 'Descripción', 'Acciones']}
-      columnStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 150px;']}
-      columnClasses={['d-none', '', '', 'text-end']}
-      tdStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 150px;']}
-      messages = {{
-        success: 'Datos actualizados', 
-        errorNetwork: 'No se pudo listar los sistemas. No hay conexión con el servidor.',
-        notFound: 'No se pudo listar los sistemas. Recurso no encontrado.', 
-        serverError:'No se pudo listar los sistemas. Error interno del servidor',
-        requestError: 'No se pudo listar los sistemas. No se recibió respuesta del servidor',
-        otherError: 'No se pudo listar los sistemas. Ocurrió un error no esperado al traer los datos del servidor',
-      }}
-      addButton={{
-        display: true,
-        disabled: false,
-        action: addIssue
-      }}
-      pagination = {{
-        display: true,
-        step: 10,
-        totalPages: 0,
-        actualPage: 1
-      }}
-      actionButtons={[]} 
-      on:alert={handleTableAlert}
-      token={localStorage.getItem('jwtTicketsToken')}
-    />
-  </div>
+{/if}
+<div class="row">
+  <AssetsFilters 
+    on:search={handleSearchFilter} 
+    on:clean={handleCleanFilter} />
+</div>
+<div class="row subtitle-row">
+  <h4 class="subtitle">Listado de Activos</h4>
+</div>
+<div class="row">
+  <DataTable 
+    bind:this={assetDataTable}
+    recordId={'_id'}
+    fetchURL={URLS.TICKETS_SERVICE + 'api/v1/assets'}
+    deleteURL={URLS.TICKETS_SERVICE + 'api/v1/assets'}
+    tokenStorageId={'jwtTicketsToken'}
+    columnKeys={['_id', 'name', 'description']}
+    columnTypes={['id', 'td', 'td']}
+    columnNames={['ID', 'Nombre', 'Descripción', 'Acciones']}
+    columnStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 150px;']}
+    columnClasses={['d-none', '', '', 'text-end']}
+    tdStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 150px;']}
+    messages = {{
+      success: 'Datos actualizados', 
+      errorNetwork: 'No se pudo listar los sistemas. No hay conexión con el servidor.',
+      notFound: 'No se pudo listar los sistemas. Recurso no encontrado.', 
+      serverError:'No se pudo listar los sistemas. Error interno del servidor',
+      requestError: 'No se pudo listar los sistemas. No se recibió respuesta del servidor',
+      otherError: 'No se pudo listar los sistemas. Ocurrió un error no esperado al traer los datos del servidor',
+    }}
+    addButton={{
+      display: true,
+      disabled: false,
+      action: addIssue
+    }}
+    pagination = {{
+      display: true,
+      step: 10,
+      totalPages: 0,
+      actualPage: 1
+    }}
+    actionButtons={[]} 
+    on:alert={handleTableAlert}
+    token={localStorage.getItem('jwtTicketsToken')}
+  />
 </div>

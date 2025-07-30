@@ -12,7 +12,7 @@
   <ul class="nav flex-column mt-3">
     <li class="nav-item">
       <a class="nav-link" class:active={$activeLink === '/'} href="/" on:click|preventDefault={() => {navigate('/')}}>
-        <i class="fa fa-tachometer-alt me-2"></i> Dashboard
+        <i class="fa fa-pie-chart me-2" aria-hidden="true"></i> Dashboard
       </a>
     </li>
 

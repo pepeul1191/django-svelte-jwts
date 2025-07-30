@@ -98,28 +98,22 @@
 
 </style>
 
-<div class="d-flex">
-  <Sidebar {userType} />
-  <div class="main-content">
-    <Navbar {username} {userImage} />
-    <!-- Aquí se va a cargar el contenido principal según las rutas -->
-    <!-- Contenido principal -->
-    <main class="main-content mt-5">
-      <div class="container-fluid">
-        <Router basepath="{basepath}">
-          <Route path="/" component={Home} />
-          <Route path="/assets" component={Asset} />
-          <Route path="/issues" component={Issue} />
-          <Route path="/tags" component={Tag} />
-          <Route path="/employees" component={Employee} />
-          <Route path="/issues/new" component={IssueDetail} />
-          <Route path="/issues/:_id/edit/" let:params><IssueDetail _id={params._id}/></Route>
-        </Router>
-      </div>
-    </main>
-  </div>
-</div>
+<Sidebar {userType} />
+<Navbar {username} {userImage} />
 
+<main class="main-content mt-5">
+  <div class="container-fluid">
+    <Router basepath="{basepath}">
+      <Route path="/" component={Home} />
+      <Route path="/assets" component={Asset} />
+      <Route path="/issues" component={Issue} />
+      <Route path="/tags" component={Tag} />
+      <Route path="/employees" component={Employee} />
+      <Route path="/issues/new" component={IssueDetail} />
+      <Route path="/issues/:_id/edit/" let:params><IssueDetail _id={params._id}/></Route>
+    </Router>
+  </div>
+</main>
 
 <!-- Footer -->
 <footer class="bg-light text-center py-3 mt-auto">
