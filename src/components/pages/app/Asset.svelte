@@ -36,7 +36,7 @@
         icon: 'fa-trash',
         label: 'Eliminar',
         action: (record) => {
-          assetDataTable.askToDeleteRow(record, 'id');
+          assetDataTable.askToDeleteRow(record, '_id');
         }
       },
     ];
@@ -122,7 +122,9 @@
   <div class="container">
     <DataTable 
       bind:this={assetDataTable}
+      recordId={'_id'}
       fetchURL={URLS.TICKETS_SERVICE + 'api/v1/assets'}
+      deleteURL={URLS.TICKETS_SERVICE + 'api/v1/assets'}
       tokenStorageId={'jwtTicketsToken'}
       columnKeys={['_id', 'name', 'description']}
       columnTypes={['id', 'td', 'td']}
@@ -151,6 +153,7 @@
       }}
       actionButtons={[]} 
       on:alert={handleTableAlert}
+      token={localStorage.getItem('jwtTicketsToken')}
     />
   </div>
 </div>

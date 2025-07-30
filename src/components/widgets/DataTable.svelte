@@ -20,6 +20,7 @@
   export let columnStyles = [];
   export let tdStyles = [];
   export let tokenStorageId = ''
+  export let token;
   export let addButton = {
     display: false,
     disabled: false,
@@ -92,13 +93,15 @@
         {
           // params: queryParams,
           headers:{
-            //[CSRF.key]: CSRF.value,
+            //[CSRF.key]: CSRF.value,}
+            'Authorization': `Bearer ${token}`
           }
         },
       )
       .then((response) => {
         console.log(response);
-        data = data.filter(item => item.id !== idForDeleting);
+        data = data.filter(item => item[recordId] !== idForDeleting);
+        data = data;
         messageConfirmationModal.text = response.data.message ? response.data.message : 'Registro borrado correctamente';
         messageConfirmationModal.status = 'success';
         cleanMessage();
@@ -235,6 +238,7 @@
           headers: {
             'Content-Type': 'application/json',
             //[CSRF.key]: CSRF.value,
+            'Authorization': `Bearer ${token}`
           }
         })
         .then(function (response) {
@@ -331,7 +335,6 @@
       queryParams.page = pagination.actualPage;
     }
     if(fetchURL){
-      const token = localStorage.getItem(tokenStorageId);
       axios.get( // url, data, headers
         fetchURL, 
         {
