@@ -14,7 +14,7 @@ const App = {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: production ? 'static/dist/app.min.js' : 'static/dist/app.js',
+		file: production ? 'public/dist/app.min.js' : 'public/dist/app.js',
 	},
 	plugins: [
 		svelte({
@@ -42,7 +42,7 @@ const Error = {
 		sourcemap: true,
 		format: 'iife',
 		name: 'error',
-		file: production ? 'static/dist/error.min.js' : 'static/dist/error.js',
+		file: production ? 'public/dist/error.min.js' : 'public/dist/error.js',
 	},
 	plugins: [
 		svelte({
@@ -70,7 +70,7 @@ const Access = {
 		sourcemap: true,
 		format: 'iife',
 		name: 'access',
-		file: production ? 'static/dist/access.min.js' : 'static/dist/access.js',
+		file: production ? 'public/dist/access.min.js' : 'public/dist/access.js',
 	},
 	plugins: [
 		svelte({
@@ -98,7 +98,7 @@ const Vendor = {
 			sourcemap: true,
 			format: 'iife',
 			name: 'vendor',
-			file: production ? 'static/dist/vendor.min.js' : 'static/dist/vendor.js',
+			file: production ? 'public/dist/vendor.min.js' : 'public/dist/vendor.js',
 	},
 	plugins: [
 		svelte({
@@ -126,7 +126,7 @@ const Vendor = {
 			targets: [
 				{
 					src: 'node_modules/font-awesome/fonts/*',
-					dest: 'static/fonts/'
+					dest: 'public/fonts/'
 				}
 			]
 		})

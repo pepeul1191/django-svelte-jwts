@@ -19,7 +19,6 @@ export const notFoundHandler = (req, res, next) => {
 };
 
 export const redirectIfLoggedIn = (req, res, next) => {
-  console.log(req.session);
   if (req.session.user) {
     return res.redirect('/');
   }
@@ -38,7 +37,8 @@ export const requireLogin = (req, res, next) => {
 export const loadEnv = (req, res, next) => {
   res.locals = {
     ...res.locals,
-    env: process.env
+    env: process.env,
+    title: process.env.APP_NAME
   };
   next();
 };

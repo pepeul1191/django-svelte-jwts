@@ -7,10 +7,23 @@ const router = Router();
 dotenv.config();
 
 router.get('/sign-in', redirectIfLoggedIn, (req, res) => {
-  console.log('1++++++++++++++++++++++');
-  console.log(res.locals)
   res.render('session/sign-in', {
     error: req.flash('error'),
+    title: 'Bienvenido',
+  });
+});
+
+router.get('/sign-up', redirectIfLoggedIn, (req, res) => {
+  res.render('session/sign-up', {
+    error: req.flash('error'),
+    title: 'Bienvenido',
+  });
+});
+
+router.get('/reset-password', redirectIfLoggedIn, (req, res) => {
+  res.render('session/reset-password', {
+    error: req.flash('error'),
+    title: 'Bienvenido',
   });
 });
 

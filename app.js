@@ -6,8 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import session from 'express-session';
 import flash from 'connect-flash';
-import { loadEnv } from './app/configs/middlewares.js';
-import { notFoundHandler, errorHandler } from './app/configs/middlewares.js'
+import { loadEnv, notFoundHandler, errorHandler } from './app/configs/middlewares.js'
 import sessionRouter from './app/routes/session.js';
 import siteRouter from './app/routes/site.js';
 

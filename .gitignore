@@ -29,16 +29,16 @@
 !/tmp/storage/
 !/tmp/storage/.keep
 
-/static/assets
+/public/assets
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
 node_modules
-static/dist
+public/dist
 
 __pycache__
 *.sqlite3
-static/fonts
+public/fonts
 
 venv
