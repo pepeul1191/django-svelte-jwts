@@ -1,12 +1,13 @@
 <script>
   import { onMount } from 'svelte';
-  import { navigate } from "svelte-routing";
+  import { Modal } from 'bootstrap';
   import AssetsFilters from '../../forms/AssetFilters.svelte';
   import DataTable from '../../widgets/DataTable.svelte';
+  import AssetDetail from '../../forms/AssetDetail.svelte';
 
-  let issueDetailModalInstance;
-  let issueFormInstance;
-  let issueDetailModal;
+  let assetDetailModalInstance;
+  let assetFormInstance;
+  let assetDetailModal;
   let alertMessage = {
     text: '',
     status: '',
@@ -21,7 +22,7 @@
       //assetDataTable.addButton.action = () => assetDataTable.goToLink('/users');
       //assetDataTable.addButton.action = () => assetDataTable.goToHref(BASE_URL + 'hola');
       //assetDataTable.addButton.action = () => assetDataTable.openTab(BASE_URL + 'hola');
-    
+    assetDetailModalInstance = new Modal(assetDetailModal);
     // table action buttons
     assetDataTable.actionButtons = [
       {
@@ -43,7 +44,10 @@
   });
 
   const editAsset = (asset) => {
-    alert('editAssetModal');
+    modalTitle = 'Editar Activo'
+    assetFormInstance.clean();
+    assetFormInstance.loadAsset(asset);
+    assetDetailModalInstance.show();
   }
 
   const handleSearchFilter = (event) => {
@@ -59,7 +63,9 @@
   }
 
   const addIssue = () => {
-    alert('addAssetModal');
+    modalTitle = 'Agregar Activo'
+    assetFormInstance.clean();
+    assetDetailModalInstance.show();
   }
 
   const handleTableAlert = (callback) => { 
@@ -71,8 +77,29 @@
       };
     }, 4300);
   }
+
+  const handleFormSave = (event) => {
+    assetDataTable.list();
+    assetDetailModalInstance.hide();
+  };
 </script>
 <style></style>
+
+<div bind:this={assetDetailModal} class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{modalTitle}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <AssetDetail 
+          bind:this={assetFormInstance} 
+          on:saved={handleFormSave} />
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="container my-2">
   <div class="row">
