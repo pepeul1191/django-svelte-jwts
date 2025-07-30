@@ -47,15 +47,15 @@
   }
 
   const handleSearchFilter = (event) => {
-    //const { name, description } = event.detail;
+    const { name, initDate, endDate, issueStateId, priorityId, selectedTags } = event.detail;
     console.log(event.detail);
-    //systemDataTable.queryParams = {name,description};
-    //systemDataTable.list();
+    issueDataTable.queryParams = {name, initDate, endDate, issueStateId, priorityId, selectedTags};
+    issueDataTable.list();
   }
   
   const handleCleanFilter= () => {
-    systemDataTable.queryParams = {};
-    systemDataTable.list();
+    issueDataTable.queryParams = {};
+    issueDataTable.list();
   }
 
   const addIssue = () => {
@@ -90,7 +90,7 @@
       on:clean={handleCleanFilter} />
   </div>
   <div class="row subtitle-row">
-    <h4 class="subtitle">Listado de Sistemas</h4>
+    <h4 class="subtitle">Listado de Incidencias</h4>
   </div>
   <div class="container">
     <DataTable 
@@ -106,11 +106,11 @@
       tdStyles={['max-width: 50px;', 'max-width: 250px;', 'max-width: 400px;', 'max-width: 150px;']}
       messages = {{
         success: 'Datos actualizados', 
-        errorNetwork: 'No se pudo listar los sistemas. No hay conexión con el servidor.',
-        notFound: 'No se pudo listar los sistemas. Recurso no encontrado.',
-        serverError:'No se pudo listar los sistemas. Error interno del servidor',
-        requestError: 'No se pudo listar los sistemas. No se recibió respuesta del servidor',
-        otherError: 'No se pudo listar los sistemas. Ocurrió un error no esperado al traer los datos del servidor',
+        errorNetwork: 'No se pudo listar las incidencias. No hay conexión con el servidor.',
+        notFound: 'No se pudo listar las incidencias. Recurso no encontrado.',
+        serverError:'No se pudo listar las incidencias. Error interno del servidor',
+        requestError: 'No se pudo listar las incidencias. No se recibió respuesta del servidor',
+        otherError: 'No se pudo listar las incidencias. Ocurrió un error no esperado al traer los datos del servidor',
       }}
       addButton={{
         display: true,
@@ -118,7 +118,7 @@
         action: addIssue
       }}
       pagination = {{
-        display: false,
+        display: true,
         step: 10,
         totalPages: 0,
         actualPage: 1

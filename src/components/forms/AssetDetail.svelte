@@ -56,7 +56,6 @@
   const handleSubmit = async (event) => {
     event.preventDefault();  // Evita el comportamiento por defecto del formulario (recargar la página)
     // Crea un objeto con los datos del formulario
-    console.log(id)
     try {
       // Enviar datos usando Axios
       const formData = {

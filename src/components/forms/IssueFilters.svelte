@@ -49,16 +49,21 @@
 
   const searchClick = (event) => {
     event.preventDefault();
-    console.log({name, description, initDate, endDate, issueStateId, priorityId});
-    dispatch('search', {name, description, initDate, endDate, issueStateId, priorityId});
+    //console.log({name, initDate, endDate, issueStateId, priorityId});
+    //console.log(selectedTags)
+    dispatch('search', {name, initDate, endDate, issueStateId, priorityId, selectedTags});
   }
 
   const cleanClick = (event) => {
     event.preventDefault();
-    if (name || description) {
+    if (name || initDate || endDate || issueStateId || priorityId || selectedTags) {
       // Si al menos uno de los campos tiene valor, limpiamos ambos y disparamos el evento
       name = '';
-      description = '';
+      initDate = '';
+      endDate = '';
+      issueStateId = '';
+      priorityId = '';
+      selectedTags = [];
       dispatch('clean');
     }
   }

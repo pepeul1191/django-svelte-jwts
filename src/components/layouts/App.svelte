@@ -36,6 +36,9 @@
           <a class="nav-link" href="/assets" on:click|preventDefault={() => {navigate('/assets')}}>Activos</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="/tags" on:click|preventDefault={() => {navigate('/tags')}}>Etiquetas</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/issues" on:click|preventDefault={() => {navigate('/issues')}}>Incidencias</a>
         </li>
         <li class="nav-item">
