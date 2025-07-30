@@ -7,9 +7,12 @@ dotenv.config();
 
 const sharedRoutes = [
   '/',
-  '/systems',
-  '/systems/:system_id/users',
-  '/users'
+  '/assets',
+  '/employees',
+  '/issues',
+  '/tags',
+  '/issues/new',
+  '/issues/:issue_id/edit',
 ];
 
 sharedRoutes.forEach((path) => {

@@ -1,5 +1,6 @@
 <script>
   import { Router, Route, navigate } from 'svelte-routing';
+  import { onMount } from 'svelte';
   import Home from '../pages/app/Home.svelte';
   import Asste from '../pages/app/Asset.svelte';
   import Issue from '../pages/app/Issue.svelte';
@@ -9,14 +10,63 @@
 	import Asset from '../pages/app/Asset.svelte';
   export let basepath = '/';
 
-  const signOut = (e) => {
-    e.preventDefault();
-    // Borrar los tokens del localStorage
-    localStorage.removeItem('jwtAccessToken');
-    localStorage.removeItem('jwtFilesToken');
-    // Redirigir a /sign-out
-    window.location.href = '/sign-out';
-  };
+  const fetchTokensIfMissing = () => {
+    // Verificar si los tokens ya existen
+    var jwtToken = localStorage.getItem('jwtToken');
+
+    // Si ambos tokens ya están guardados, no hacer nada
+    if (jwtToken) {
+      console.log('Token ya existen en localStorage.');
+      return Promise.resolve(); // Salir sin hacer la petición
+    }
+
+    // Si alguno falta, hacer el GET a /tokens
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/session', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          var response = JSON.parse(xhr.responseText);
+          var tokens = response.tokens;
+          console.log(tokens)
+
+          // Guardar ambos tokens en localStorage
+          if (tokens) {
+            localStorage.setItem('jwtTicketsToken', tokens.tickets);
+            localStorage.setItem('jwtFilesToken', tokens.files);
+            localStorage.setItem('jwtAccessToken', tokens.access);
+          }
+
+          console.log('Token guardado en localStorage.');
+          resolve();
+        } else {
+          reject(new Error('Error HTTP: ' + xhr.status));
+        }
+      };
+
+      xhr.onerror = function() {
+        reject(new Error('Error de red'));
+      };
+
+      xhr.send();
+    })
+    .catch(function(error) {
+      console.error('Error al obtener tokens:', error);
+      return Promise.reject(error);
+    });
+  }
+
+  onMount(() => {
+    fetchTokensIfMissing()
+      .then(function() {
+        console.log('Tokens listos para usar.');
+      })
+      .catch(function(err) {
+        console.error('No se pudieron obtener los tokens:', err);
+      });
+  });
 </script>
   
 <style></style>
@@ -43,7 +93,7 @@
           <a class="nav-link" href="/issues" on:click|preventDefault={() => {navigate('/issues')}}>Incidencias</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/sign-out" on:click={signOut}>Salir</a>
+          <a class="nav-link" href="/sign-out">Salir</a>
         </li>
       </ul>
     </div>

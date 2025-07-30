@@ -1,4 +1,0 @@
-python-dotenv
-django
-requests
-django-cors-headers

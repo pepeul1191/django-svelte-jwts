@@ -38,7 +38,7 @@ export const loadEnv = (req, res, next) => {
   res.locals = {
     ...res.locals,
     env: process.env,
-    title: process.env.APP_NAME
+    title: process.env.APP_NAME || 'Mi Aplicación' 
   };
   next();
 };
@@ -48,5 +48,5 @@ export const errorHandler = (err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   res.status(err.status || 500);
-  res.render('session/error');
+  res.render('error');
 };

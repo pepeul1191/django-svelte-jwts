@@ -30,8 +30,8 @@ export const login = async (username, password) => {
       answer.body.id = tmp.id;
       answer.body.username = tmp.username;
       answer.body.email = tmp.email;
-      answer.body.tokens = {};
-      answer.body.tokens.access = tmp.token;
+      answer.tokens = {};
+      answer.tokens.access = tmp.token;
       answer.body.email = tmp.email;
 
       // Petición a la API de archivos
@@ -74,8 +74,8 @@ export const login = async (username, password) => {
 
       // Combinar respuestas de servicios externos
       if (filesResponse.status === 200 && ticketsResponse.status === 200) {
-        answer.body.tokens.files = filesResponse.data.token;
-        answer.body.tokens.tickets = ticketsResponse.data.token;
+        answer.tokens.files = filesResponse.data.token;
+        answer.tokens.tickets = ticketsResponse.data.token;
       } else {
         const tmpMessage = `${filesResponse.data.message}, ${ticketsResponse.data.message}`;
         answer.body.error = tmpMessage;
