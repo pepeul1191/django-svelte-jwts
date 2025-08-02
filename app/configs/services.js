@@ -33,6 +33,7 @@ export const login = async (username, password) => {
       answer.tokens = {};
       answer.tokens.access = tmp.token;
       answer.body.email = tmp.email;
+      answer.roles = tmp.roles;
 
       // Petición a la API de archivos
       const filesResponse = await axios.post(

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { Router } from 'express';
 import { redirectIfLoggedIn, requireLogin } from '../configs/middlewares.js';
-import { login } from '../configs/helpers.js';
+import { login } from '../configs/services.js';
 
 const router = Router();
 dotenv.config();
@@ -45,6 +45,7 @@ router.post('/sign-in', async (req, res) => {
       req.session.user = answer.body;
       req.session.tokens = answer.tokens;
       req.session.employee = answer.employee;
+      req.session.roles = answer.roles;
       req.session.login_at = moment().toISOString();
 
       // Redirigir a la página principal
@@ -80,6 +81,7 @@ router.get('/session', requireLogin, (req, res) => {
       user: req.session.user,
       employee: req.session.employee,
       tokens: req.session.tokens,
+      roles: req.session.roles,
       sessionId: req.sessionID,
       createdAt: req.session.cookie.expires
     });
